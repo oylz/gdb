@@ -1,0 +1,17 @@
+#!/bin/sh
+
+
+ppid=$1
+backtrace="thread apply all bt"
+
+
+./gdb/gdb --quiet -nx  /proc/$ppid/exe $ppid <<EOF 2>&1 | 
+set width 0
+set height 0
+set pagination no
+$backtrace
+EOF
+/bin/sed -n \
+    -e 's/^\((gdb) \)*//' \
+    -e '/^#/p' \
+    -e '/^Thread/p'
