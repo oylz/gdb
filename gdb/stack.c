@@ -215,7 +215,17 @@ print_frame_arg(const struct frame_arg *arg){
     char *arg_name = SYMBOL_PRINT_NAME(arg->sym);
     int offset = value_offset(arg->val);
     CORE_ADDR addr = value_raw_address(arg->val);
-    fprintf(stderr, "\t####XYZ arg_name:%s, offset:%d, addr:%d\n", arg_name, offset, (unsigned int)addr);
+    int eoffset = value_embedded_offset(arg->val);
+    gdb_byte *content = value_contents_for_printing(arg->val);
+
+    fprintf(stderr, "\t####XYZ arg_name:%s, offset:%x, addr:%x, eoffset:%x, content:%lx\n", 
+        arg_name, offset, (unsigned int)addr, eoffset, content);
+    struct type *type = value_type(arg->val); 
+    int tc = TYPE_CODE(type);
+    if(tc == TYPE_CODE_INT){
+        uint64_t vv = unpack_long(type, content + eoffset);
+        fprintf(stderr, "\t\t****XYZ, vv:%lx\n", vv);
+    }
   }
   stb = mem_fileopen ();
   old_chain = make_cleanup_ui_file_delete (stb);

@@ -893,8 +893,10 @@ require_available (const struct value *value)
 const gdb_byte *
 value_contents_for_printing (struct value *value)
 {
-  if (value->lazy)
+  if (value->lazy){
+    fprintf(stderr, "\t####XYZ value->lazy\n");
     value_fetch_lazy (value);
+  }
   return value->contents;
 }
 

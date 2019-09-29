@@ -376,7 +376,7 @@ generic_val_print (struct type *type, const gdb_byte *valaddr,
   struct type *unresolved_type = type;
   LONGEST val;
   CORE_ADDR addr;
-  fprintf(stderr, "\t@@@@XYZ, generic_val_print\n");
+  fprintf(stderr, "\t\t@@@@XYZ, generic_val_print\n");
   CHECK_TYPEDEF (type);
   switch (TYPE_CODE (type)){
     case TYPE_CODE_ARRAY:
@@ -594,7 +594,7 @@ print_unpacked_pointer:
 
     case TYPE_CODE_CHAR:
       if (options->format || options->output_format){
-        fprintf(stderr, "\t@@@@XYZ, TYPE_CODE_CHAR A\n");
+        fprintf(stderr, "\t\t@@@@XYZ, TYPE_CODE_CHAR A\n");
         struct value_print_options opts = *options;
         opts.format = (options->format ? options->format
              : options->output_format);
@@ -603,7 +603,7 @@ print_unpacked_pointer:
       }
       else{
         val = unpack_long (type, valaddr + embedded_offset);
-        fprintf(stderr, "\t@@@@XYZ, TYPE_CODE_CHAR B, val:%x\n", (unsigned int)val);
+        fprintf(stderr, "\t\t@@@@XYZ, TYPE_CODE_CHAR B, val:%x\n", (unsigned int)val);
         if (TYPE_UNSIGNED (type))
           fprintf_filtered (stream, "%u", (unsigned int) val);
         else
@@ -756,14 +756,14 @@ val_print (struct type *type, const gdb_byte *valaddr, int embedded_offset,
   }
 
   TRY_CATCH(except, RETURN_MASK_ERROR){
-      fprintf(stderr, "\t####XYZ in val_print, will call language->la_val_print:%lx"
-        ", by nm command we know it is:c_val_print\n", 
-        language->la_val_print);
+      fprintf(stderr, "\t\t####XYZ in val_print, will call language->la_val_print:%lx"
+        ", by nm command we know it is:c_val_print, valaddr:%lx\n", 
+        language->la_val_print, valaddr);
       language->la_val_print(type, valaddr, embedded_offset, address,
                   stream, recurse, val,
                   &local_opts);
-      fprintf(stderr, "\t####XYZ in val_print, finish call language->la_val_print:%lx\n",
-        language->la_val_print);
+      fprintf(stderr, "\t\t####XYZ in val_print, finish call language->la_val_print:%lx, valaddr:%lx\n",
+        language->la_val_print, valaddr);
   }
   if(except.reason < 0){
     fprintf_filtered (stream, _("<error reading variable>"));
@@ -814,7 +814,7 @@ common_val_print (struct value *val, struct ui_file *stream, int recurse,
           const struct value_print_options *options,
           const struct language_defn *language)
 {
-  fprintf(stderr, "\t#### XYZ in common_val_print\n");
+  fprintf(stderr, "\t\t#### XYZ in common_val_print\n");
   if (!value_check_printable(val, stream, options))
     return;
 

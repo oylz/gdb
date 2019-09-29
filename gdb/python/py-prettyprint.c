@@ -732,13 +732,13 @@ apply_val_pretty_printer (struct type *type, const gdb_byte *valaddr,
   printer = find_pretty_printer (val_obj);
   Py_DECREF (val_obj);
   make_cleanup_py_decref (printer);
-  fprintf(stderr, "\t####XYZ, in apply_val_pretty_printer A\n");
+  fprintf(stderr, "\t\t####XYZ, in apply_val_pretty_printer A\n");
   if (! printer || printer == Py_None)
     goto done;
-  fprintf(stderr, "\t####XYZ, in apply_val_pretty_printer B\n");
+  fprintf(stderr, "\\tt####XYZ, in apply_val_pretty_printer B\n");
   /* If we are printing a map, we want some special formatting.  */
   hint = gdbpy_get_display_hint (printer);
-  fprintf(stderr, "\t####XYZ, in apply_val_pretty_printer, hint:[%s]\n", hint);
+  fprintf(stderr, "\\tt####XYZ, in apply_val_pretty_printer, hint:[%s]\n", hint);
   make_cleanup (free_current_contents, &hint);
 
   /* Print the section */
