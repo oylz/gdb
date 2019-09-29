@@ -411,7 +411,9 @@ execute_command (char *p, int from_tty)
   struct cleanup *cleanup_if_error, *cleanup;
   struct cmd_list_element *c;
   char *line;
-
+  char pp[256] = {0};
+  strcpy(pp, p);
+  fprintf(stderr, "\t****XYZ nnnn========beg execute_command, pp:[%s]=========================================\n", pp);
   cleanup_if_error = make_bpstat_clear_actions_cleanup ();
   cleanup = prepare_execute_command ();
 
@@ -428,10 +430,10 @@ execute_command (char *p, int from_tty)
 
   target_log_command (p);
 
-  while (*p == ' ' || *p == '\t')
+  while (*p == ' ' || *p == '\t'){
     p++;
-  if (*p)
-    {
+  }
+  if (*p){
       char *arg;
       line = p;
 
@@ -454,55 +456,63 @@ execute_command (char *p, int from_tty)
       /* Clear off trailing whitespace, except for set and complete
          command.  */
       if (arg
-	  && c->type != set_cmd
-	  && !is_complete_command (c))
-	{
-	  p = arg + strlen (arg) - 1;
-	  while (p >= arg && (*p == ' ' || *p == '\t'))
-	    p--;
-	  *(p + 1) = '\0';
-	}
+	    && c->type != set_cmd
+	    && !is_complete_command (c)){
+	    p = arg + strlen (arg) - 1;
+	    while (p >= arg && (*p == ' ' || *p == '\t')){
+	        p--;
+        }
+	    *(p + 1) = '\0';
+	  }
 
       /* If this command has been pre-hooked, run the hook first.  */
       execute_cmd_pre_hook (c);
 
-      if (c->flags & DEPRECATED_WARN_USER)
-	deprecated_cmd_warning (&line);
+      if (c->flags & DEPRECATED_WARN_USER){
+	    deprecated_cmd_warning (&line);
+      }
 
       /* c->user_commands would be NULL in the case of a python command.  */
-      if (c->class == class_user && c->user_commands)
-	execute_user_command (c, arg);
-      else if (c->type == set_cmd)
-	do_set_command (arg, from_tty, c);
-      else if (c->type == show_cmd)
-	do_show_command (arg, from_tty, c);
-      else if (!cmd_func_p (c))
-	error (_("That is not a command, just a help topic."));
-      else if (deprecated_call_command_hook)
-	deprecated_call_command_hook (c, arg, from_tty);
-      else
-	cmd_func (c, arg, from_tty);
+      if (c->class == class_user && c->user_commands){
+	    execute_user_command (c, arg);
+      }
+      else if (c->type == set_cmd){
+	    do_set_command (arg, from_tty, c);
+      }
+      else if (c->type == show_cmd){
+	    do_show_command (arg, from_tty, c);
+      }
+      else if (!cmd_func_p (c)){
+	    error (_("That is not a command, just a help topic."));
+      }
+      else if (deprecated_call_command_hook){
+	    deprecated_call_command_hook (c, arg, from_tty);
+      }
+      else{
+	    cmd_func (c, arg, from_tty);
+      }
 
       /* If the interpreter is in sync mode (we're running a user
 	 command's list, running command hooks or similars), and we
 	 just ran a synchronous command that started the target, wait
 	 for that command to end.  */
-      if (!interpreter_async && sync_execution)
-	{
-	  while (gdb_do_one_event () >= 0)
-	    if (!sync_execution)
-	      break;
-	}
+      if (!interpreter_async && sync_execution){
+	    while (gdb_do_one_event () >= 0){
+	      if (!sync_execution){
+	        break;
+          }
+        }
+	  }
 
       /* If this command has been post-hooked, run the hook last.  */
       execute_cmd_post_hook (c);
-
-    }
+  }
 
   check_frame_language_change ();
 
   do_cleanups (cleanup);
   discard_cleanups (cleanup_if_error);
+  fprintf(stderr, "\t****XYZ uuuu========end execute_command, pp:[%s]=========================================\n", pp); 
 }
 
 /* Run execute_command for P and FROM_TTY.  Capture its output into the

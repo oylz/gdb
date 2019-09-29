@@ -2672,7 +2672,7 @@ char *
 target_pid_to_str (ptid_t ptid)
 {
   struct target_ops *t;
-
+  fprintf(stderr, "\t****XYZ target_pid_to_str\n");
   for (t = current_target.beneath; t != NULL; t = t->beneath)
     {
       if (t->to_pid_to_str != NULL)

@@ -1183,7 +1183,7 @@ thread_apply_all_command (char *cmd, int from_tty)
   struct thread_info *tp;
   struct cleanup *old_chain;
   char *saved_cmd;
-
+  fprintf(stderr, "\t****XYZ thread_apply_all_command, cmd:[%s], from_tty:%d\n", cmd, from_tty);
   if (cmd == NULL || *cmd == '\000')
     error (_("Please specify a command following the thread ID list"));
 
@@ -1202,6 +1202,7 @@ thread_apply_all_command (char *cmd, int from_tty)
 
 	printf_filtered (_("\nThread %d (%s):\n"),
 			 tp->num, target_pid_to_str (inferior_ptid));
+    fprintf(stderr, "\t****XYZ in thread_apply_all_command, tp->num:%d, target_pid_to_str:%s, cmd:[%s]\n", tp->num, target_pid_to_str(inferior_ptid), cmd);
 	execute_command (cmd, from_tty);
 	strcpy (cmd, saved_cmd);	/* Restore exact command used
 					   previously.  */
