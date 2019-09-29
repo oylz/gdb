@@ -72,14 +72,13 @@ struct cmd_list_element
     void (*func) (struct cmd_list_element *c, char *args, int from_tty);
     /* The command's real callback.  At present func() bounces through
        to one of the below.  */
-    union
-      {
-	/* If type is not_set_cmd, call it like this: */
-	cmd_cfunc_ftype *cfunc;
-	/* If type is set_cmd or show_cmd, first set the variables,
+    union{
+	  /* If type is not_set_cmd, call it like this: */
+	  cmd_cfunc_ftype *cfunc;
+	  /* If type is set_cmd or show_cmd, first set the variables,
 	   and then call this: */
-	cmd_sfunc_ftype *sfunc;
-      }
+	  cmd_sfunc_ftype *sfunc;
+    }
     function;
 
     /* Local state (context) for this command.  This can be anything.  */

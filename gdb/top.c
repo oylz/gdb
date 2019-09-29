@@ -33,7 +33,7 @@
 #include "expression.h"
 #include "value.h"
 #include "language.h"
-#include "terminal.h"		/* For job_control.  */
+#include "terminal.h"        /* For job_control.  */
 #include "annotate.h"
 #include "completer.h"
 #include "top.h"
@@ -73,7 +73,7 @@ extern void initialize_all_files (void);
 /* Default command line prompt.  This is overriden in some configs.  */
 
 #ifndef DEFAULT_PROMPT
-#define DEFAULT_PROMPT	"(gdb) "
+#define DEFAULT_PROMPT    "(gdb) "
 #endif
 
 /* Initialization file name for gdb.  This is overridden in some configs.  */
@@ -86,8 +86,8 @@ extern void initialize_all_files (void);
 # endif
 #endif
 
-#ifndef	GDBINIT_FILENAME
-#define	GDBINIT_FILENAME	".gdbinit"
+#ifndef    GDBINIT_FILENAME
+#define    GDBINIT_FILENAME    ".gdbinit"
 #endif
 char gdbinit[PATH_MAX + 1] = GDBINIT_FILENAME;
 
@@ -98,7 +98,7 @@ int inhibit_gdbinit = 0;
 
 int use_windows = 0;
 
-extern char lang_frame_mismatch_warn[];		/* language.c */
+extern char lang_frame_mismatch_warn[];        /* language.c */
 
 /* Flag for whether we want to confirm potentially dangerous
    operations.  Default is yes.  */
@@ -107,11 +107,11 @@ int confirm = 1;
 
 static void
 show_confirm (struct ui_file *file, int from_tty,
-	      struct cmd_list_element *c, const char *value)
+          struct cmd_list_element *c, const char *value)
 {
   fprintf_filtered (file, _("Whether to confirm potentially "
-			    "dangerous operations is %s.\n"),
-		    value);
+                "dangerous operations is %s.\n"),
+            value);
 }
 
 /* stdio stream that command input is being read from.  Set to stdin
@@ -216,9 +216,9 @@ void (*deprecated_command_loop_hook) (void);
 /* Called from print_frame_info to list the line we stopped in.  */
 
 void (*deprecated_print_frame_info_listing_hook) (struct symtab * s, 
-						  int line,
-						  int stopline, 
-						  int noerror);
+                          int line,
+                          int stopline, 
+                          int noerror);
 /* Replaces most of query.  */
 
 int (*deprecated_query_hook) (const char *, va_list);
@@ -263,14 +263,14 @@ void (*deprecated_register_changed_hook) (int regno);
    to run while waiting for target events.  */
 
 ptid_t (*deprecated_target_wait_hook) (ptid_t ptid,
-				       struct target_waitstatus *status,
-				       int options);
+                       struct target_waitstatus *status,
+                       int options);
 
 /* Used by UI as a wrapper around command execution.  May do various
    things like enabling/disabling buttons, etc...  */
 
 void (*deprecated_call_command_hook) (struct cmd_list_element * c, 
-				      char *cmd, int from_tty);
+                      char *cmd, int from_tty);
 
 /* Called after a `set' command has finished.  Is only run if the
    `set' command succeeded.  */
@@ -375,9 +375,9 @@ check_frame_language_change (void)
   if (current_language != expected_language)
     {
       if (language_mode == language_mode_auto && info_verbose)
-	{
-	  language_info (1);	/* Print what changed.  */
-	}
+    {
+      language_info (1);    /* Print what changed.  */
+    }
       warned = 0;
     }
 
@@ -393,12 +393,12 @@ check_frame_language_change (void)
 
       flang = get_frame_language ();
       if (!warned
-	  && flang != language_unknown
-	  && flang != current_language->la_language)
-	{
-	  printf_filtered ("%s\n", lang_frame_mismatch_warn);
-	  warned = 1;
-	}
+      && flang != language_unknown
+      && flang != current_language->la_language)
+    {
+      printf_filtered ("%s\n", lang_frame_mismatch_warn);
+      warned = 1;
+    }
     }
 }
 
@@ -409,11 +409,11 @@ void
 execute_command (char *p, int from_tty)
 {
   struct cleanup *cleanup_if_error, *cleanup;
-  struct cmd_list_element *c;
+  struct cmd_list_element *c;// cmd_list_element defined in [./gdb/cli/cli-decode.h#L56]
   char *line;
   char pp[256] = {0};
   strcpy(pp, p);
-  fprintf(stderr, "\t****XYZ nnnn========beg execute_command, pp:[%s]=========================================\n", pp);
+  fprintf(stderr, "\t****XYZ nnnn========beg in gdb/top.c::execute_command, pp:[%s]=========================================\n", pp);
   cleanup_if_error = make_bpstat_clear_actions_cleanup ();
   cleanup = prepare_execute_command ();
 
@@ -422,11 +422,10 @@ execute_command (char *p, int from_tty)
   alloca (0);
 
   /* This can happen when command_line_input hits end of file.  */
-  if (p == NULL)
-    {
+  if (p == NULL){
       do_cleanups (cleanup);
       return;
-    }
+  }
 
   target_log_command (p);
 
@@ -440,7 +439,7 @@ execute_command (char *p, int from_tty)
       /* If trace-commands is set then this will print this command.  */
       print_command_trace (p);
 
-      c = lookup_cmd (&p, cmdlist, "", 0, 1);
+      c = lookup_cmd(&p, cmdlist, "", 0, 1);// defined in [./gdb/cli/cli-decode.c#L1451]
 
       /* Pass null arg rather than an empty one.  */
       arg = *p ? p : 0;
@@ -456,54 +455,60 @@ execute_command (char *p, int from_tty)
       /* Clear off trailing whitespace, except for set and complete
          command.  */
       if (arg
-	    && c->type != set_cmd
-	    && !is_complete_command (c)){
-	    p = arg + strlen (arg) - 1;
-	    while (p >= arg && (*p == ' ' || *p == '\t')){
-	        p--;
+        && c->type != set_cmd
+        && !is_complete_command (c)){
+        p = arg + strlen (arg) - 1;
+        while (p >= arg && (*p == ' ' || *p == '\t')){
+            p--;
         }
-	    *(p + 1) = '\0';
-	  }
+        *(p + 1) = '\0';
+      }
 
       /* If this command has been pre-hooked, run the hook first.  */
       execute_cmd_pre_hook (c);
 
       if (c->flags & DEPRECATED_WARN_USER){
-	    deprecated_cmd_warning (&line);
+        deprecated_cmd_warning (&line);
       }
 
       /* c->user_commands would be NULL in the case of a python command.  */
       if (c->class == class_user && c->user_commands){
-	    execute_user_command (c, arg);
+        fprintf(stderr, "\t****XYZ will call execute_user_command\n");
+        execute_user_command (c, arg);
       }
       else if (c->type == set_cmd){
-	    do_set_command (arg, from_tty, c);
+        fprintf(stderr, "\t****XYZ will call do_set_command\n");
+        do_set_command (arg, from_tty, c);
       }
       else if (c->type == show_cmd){
-	    do_show_command (arg, from_tty, c);
+        fprintf(stderr, "\t****XYZ will call do_show_command\n");
+        do_show_command (arg, from_tty, c);
       }
       else if (!cmd_func_p (c)){
-	    error (_("That is not a command, just a help topic."));
+        error (_("That is not a command, just a help topic."));
       }
       else if (deprecated_call_command_hook){
-	    deprecated_call_command_hook (c, arg, from_tty);
+        fprintf(stderr, "\t****XYZ will call deprecated_call_command_hook\n");
+        deprecated_call_command_hook (c, arg, from_tty);
       }
       else{
-	    cmd_func (c, arg, from_tty);
+        fprintf(stderr, "\t****XYZ will call cmd_func, c->name:%s, arg:[%s], c->func:%lx\n", 
+            c->name, arg, c->func);
+        cmd_func(c, arg, from_tty);// defined in [./gdb/cli/cli-decode.c#L1856]
       }
 
       /* If the interpreter is in sync mode (we're running a user
-	 command's list, running command hooks or similars), and we
-	 just ran a synchronous command that started the target, wait
-	 for that command to end.  */
+     command's list, running command hooks or similars), and we
+     just ran a synchronous command that started the target, wait
+     for that command to end.  */
       if (!interpreter_async && sync_execution){
-	    while (gdb_do_one_event () >= 0){
-	      if (!sync_execution){
-	        break;
+        while (gdb_do_one_event () >= 0){
+          if (!sync_execution){
+            break;
           }
         }
-	  }
-
+      }
+      fprintf(stderr, "\t****XYZ will call execute_cmd_post_hook\n"); 
       /* If this command has been post-hooked, run the hook last.  */
       execute_cmd_post_hook (c);
   }
@@ -512,7 +517,7 @@ execute_command (char *p, int from_tty)
 
   do_cleanups (cleanup);
   discard_cleanups (cleanup_if_error);
-  fprintf(stderr, "\t****XYZ uuuu========end execute_command, pp:[%s]=========================================\n", pp); 
+  fprintf(stderr, "\t****XYZ uuuu========end in gdb/top.c::execute_command, pp:[%s]=========================================\n", pp); 
 }
 
 /* Run execute_command for P and FROM_TTY.  Capture its output into the
@@ -575,22 +580,22 @@ command_loop (void)
   while (instream && !feof (instream))
     {
       if (window_hook && instream == stdin)
-	(*window_hook) (instream, get_prompt ());
+    (*window_hook) (instream, get_prompt ());
 
       clear_quit_flag ();
       if (instream == stdin && stdin_is_tty)
-	reinitialize_more_filter ();
+    reinitialize_more_filter ();
       old_chain = make_cleanup (null_cleanup, 0);
 
       /* Get a command-line.  This calls the readline package.  */
       command = command_line_input (instream == stdin ?
-				    get_prompt () : (char *) NULL,
-				    instream == stdin, "prompt");
+                    get_prompt () : (char *) NULL,
+                    instream == stdin, "prompt");
       if (command == 0)
-	{
-	  do_cleanups (old_chain);
-	  return;
-	}
+    {
+      do_cleanups (old_chain);
+      return;
+    }
 
       make_command_stats_cleanup (1);
 
@@ -669,29 +674,29 @@ gdb_readline (char *prompt_arg)
       c = fgetc (instream ? instream : stdin);
 
       if (c == EOF)
-	{
-	  if (input_index > 0)
-	    /* The last line does not end with a newline.  Return it, and
-	       if we are called again fgetc will still return EOF and
-	       we'll return NULL then.  */
-	    break;
-	  xfree (result);
-	  return NULL;
-	}
+    {
+      if (input_index > 0)
+        /* The last line does not end with a newline.  Return it, and
+           if we are called again fgetc will still return EOF and
+           we'll return NULL then.  */
+        break;
+      xfree (result);
+      return NULL;
+    }
 
       if (c == '\n')
-	{
-	  if (input_index > 0 && result[input_index - 1] == '\r')
-	    input_index--;
-	  break;
-	}
+    {
+      if (input_index > 0 && result[input_index - 1] == '\r')
+        input_index--;
+      break;
+    }
 
       result[input_index++] = c;
       while (input_index >= result_size)
-	{
-	  result_size *= 2;
-	  result = (char *) xrealloc (result, result_size);
-	}
+    {
+      result_size *= 2;
+      result = (char *) xrealloc (result, result_size);
+    }
     }
 
   result[input_index++] = '\0';
@@ -712,10 +717,10 @@ static int command_editing_p;
 static int write_history_p;
 static void
 show_write_history_p (struct ui_file *file, int from_tty,
-		      struct cmd_list_element *c, const char *value)
+              struct cmd_list_element *c, const char *value)
 {
   fprintf_filtered (file, _("Saving of the history record on exit is %s.\n"),
-		    value);
+            value);
 }
 
 /* The variable associated with the "set/show history size"
@@ -724,20 +729,20 @@ static unsigned int history_size_setshow_var;
 
 static void
 show_history_size (struct ui_file *file, int from_tty,
-		   struct cmd_list_element *c, const char *value)
+           struct cmd_list_element *c, const char *value)
 {
   fprintf_filtered (file, _("The size of the command history is %s.\n"),
-		    value);
+            value);
 }
 
 static char *history_filename;
 static void
 show_history_filename (struct ui_file *file, int from_tty,
-		       struct cmd_list_element *c, const char *value)
+               struct cmd_list_element *c, const char *value)
 {
   fprintf_filtered (file, _("The filename in which to record "
-			    "the command history is \"%s\".\n"),
-		    value);
+                "the command history is \"%s\".\n"),
+            value);
 }
 
 /* This is like readline(), but it has some gdb-specific behavior.
@@ -934,11 +939,11 @@ command_line_input (char *prompt_arg, int repeat, char *annotation_suffix)
   if (annotation_level > 1 && instream == stdin)
     {
       local_prompt = alloca ((prompt_arg == NULL ? 0 : strlen (prompt_arg))
-			     + strlen (annotation_suffix) + 40);
+                 + strlen (annotation_suffix) + 40);
       if (prompt_arg == NULL)
-	local_prompt[0] = '\0';
+    local_prompt[0] = '\0';
       else
-	strcpy (local_prompt, prompt_arg);
+    strcpy (local_prompt, prompt_arg);
       strcat (local_prompt, "\n\032\032");
       strcat (local_prompt, annotation_suffix);
       strcat (local_prompt, "\n");
@@ -971,60 +976,60 @@ command_line_input (char *prompt_arg, int repeat, char *annotation_suffix)
       gdb_flush (gdb_stderr);
 
       if (source_file_name != NULL)
-	++source_line_number;
+    ++source_line_number;
 
       if (annotation_level > 1 && instream == stdin)
-	{
-	  puts_unfiltered ("\n\032\032pre-");
-	  puts_unfiltered (annotation_suffix);
-	  puts_unfiltered ("\n");
-	}
+    {
+      puts_unfiltered ("\n\032\032pre-");
+      puts_unfiltered (annotation_suffix);
+      puts_unfiltered ("\n");
+    }
 
       /* Don't use fancy stuff if not talking to stdin.  */
       if (deprecated_readline_hook && input_from_terminal_p ())
-	{
-	  rl = (*deprecated_readline_hook) (local_prompt);
-	}
+    {
+      rl = (*deprecated_readline_hook) (local_prompt);
+    }
       else if (command_editing_p && input_from_terminal_p ())
-	{
-	  rl = gdb_readline_wrapper (local_prompt);
-	}
+    {
+      rl = gdb_readline_wrapper (local_prompt);
+    }
       else
-	{
-	  rl = gdb_readline (local_prompt);
-	}
+    {
+      rl = gdb_readline (local_prompt);
+    }
 
       if (annotation_level > 1 && instream == stdin)
-	{
-	  puts_unfiltered ("\n\032\032post-");
-	  puts_unfiltered (annotation_suffix);
-	  puts_unfiltered ("\n");
-	}
+    {
+      puts_unfiltered ("\n\032\032post-");
+      puts_unfiltered (annotation_suffix);
+      puts_unfiltered ("\n");
+    }
 
       if (!rl || rl == (char *) EOF)
-	{
-	  got_eof = 1;
-	  break;
-	}
+    {
+      got_eof = 1;
+      break;
+    }
       if (strlen (rl) + 1 + (p - linebuffer) > linelength)
-	{
-	  linelength = strlen (rl) + 1 + (p - linebuffer);
-	  nline = (char *) xrealloc (linebuffer, linelength);
-	  p += nline - linebuffer;
-	  linebuffer = nline;
-	}
+    {
+      linelength = strlen (rl) + 1 + (p - linebuffer);
+      nline = (char *) xrealloc (linebuffer, linelength);
+      p += nline - linebuffer;
+      linebuffer = nline;
+    }
       p1 = rl;
       /* Copy line.  Don't copy null at end.  (Leaves line alone
          if this was just a newline).  */
       while (*p1)
-	*p++ = *p1++;
+    *p++ = *p1++;
 
-      xfree (rl);		/* Allocated in readline.  */
+      xfree (rl);        /* Allocated in readline.  */
 
       if (p == linebuffer || *(p - 1) != '\\')
-	break;
+    break;
 
-      p--;			/* Put on top of '\'.  */
+      p--;            /* Put on top of '\'.  */
       local_prompt = (char *) 0;
     }
 
@@ -1057,28 +1062,28 @@ command_line_input (char *prompt_arg, int repeat, char *annotation_suffix)
       char *history_value;
       int expanded;
 
-      *p = '\0';		/* Insert null now.  */
+      *p = '\0';        /* Insert null now.  */
       expanded = history_expand (linebuffer, &history_value);
       if (expanded)
-	{
-	  /* Print the changes.  */
-	  printf_unfiltered ("%s\n", history_value);
+    {
+      /* Print the changes.  */
+      printf_unfiltered ("%s\n", history_value);
 
-	  /* If there was an error, call this function again.  */
-	  if (expanded < 0)
-	    {
-	      xfree (history_value);
-	      return command_line_input (prompt_arg, repeat,
-					 annotation_suffix);
-	    }
-	  if (strlen (history_value) > linelength)
-	    {
-	      linelength = strlen (history_value) + 1;
-	      linebuffer = (char *) xrealloc (linebuffer, linelength);
-	    }
-	  strcpy (linebuffer, history_value);
-	  p = linebuffer + strlen (linebuffer);
-	}
+      /* If there was an error, call this function again.  */
+      if (expanded < 0)
+        {
+          xfree (history_value);
+          return command_line_input (prompt_arg, repeat,
+                     annotation_suffix);
+        }
+      if (strlen (history_value) > linelength)
+        {
+          linelength = strlen (history_value) + 1;
+          linebuffer = (char *) xrealloc (linebuffer, linelength);
+        }
+      strcpy (linebuffer, history_value);
+      p = linebuffer + strlen (linebuffer);
+    }
       xfree (history_value);
     }
 
@@ -1104,16 +1109,16 @@ command_line_input (char *prompt_arg, int repeat, char *annotation_suffix)
      and remove the '#'.  The kill ring is probably better, but some
      people are in the habit of commenting things out.  */
   if (*p1 == '#')
-    *p1 = '\0';			/* Found a comment.  */
+    *p1 = '\0';            /* Found a comment.  */
 
   /* Save into global buffer if appropriate.  */
   if (repeat)
     {
       if (linelength > saved_command_line_size)
-	{
-	  saved_command_line = xrealloc (saved_command_line, linelength);
-	  saved_command_line_size = linelength;
-	}
+    {
+      saved_command_line = xrealloc (saved_command_line, linelength);
+      saved_command_line_size = linelength;
+    }
       strcpy (saved_command_line, linebuffer);
       return saved_command_line;
     }
@@ -1134,7 +1139,7 @@ print_gdb_version (struct ui_file *stream)
   /* Second line is a copyright notice.  */
 
   fprintf_filtered (stream,
-		    "Copyright (C) 2013 Free Software Foundation, Inc.\n");
+            "Copyright (C) 2013 Free Software Foundation, Inc.\n");
 
   /* Following the copyright is a brief statement that the program is
      free software, that users are free to copy and change it on
@@ -1153,7 +1158,7 @@ and \"show warranty\" for details.\n");
   if (strcmp (host_name, target_name) != 0)
     {
       fprintf_filtered (stream, "--host=%s --target=%s",
-			host_name, target_name);
+            host_name, target_name);
     }
   else
     {
@@ -1164,7 +1169,7 @@ and \"show warranty\" for details.\n");
   if (REPORT_BUGS_TO[0])
     {
       fprintf_filtered (stream, 
-			_("\nFor bug reporting instructions, please see:\n"));
+            _("\nFor bug reporting instructions, please see:\n"));
       fprintf_filtered (stream, "%s.", REPORT_BUGS_TO);
     }
 }
@@ -1219,12 +1224,12 @@ kill_or_detach (struct inferior *inf, void *args)
 
       /* Leave core files alone.  */
       if (target_has_execution)
-	{
-	  if (inf->attach_flag)
-	    target_detach (qt->args, qt->from_tty);
-	  else
-	    target_kill ();
-	}
+    {
+      if (inf->attach_flag)
+        target_detach (qt->args, qt->from_tty);
+      else
+        target_kill ();
+    }
     }
 
   return 0;
@@ -1244,12 +1249,12 @@ print_inferior_quit_action (struct inferior *inf, void *arg)
 
   if (inf->attach_flag)
     fprintf_filtered (stb,
-		      _("\tInferior %d [%s] will be detached.\n"), inf->num,
-		      target_pid_to_str (pid_to_ptid (inf->pid)));
+              _("\tInferior %d [%s] will be detached.\n"), inf->num,
+              target_pid_to_str (pid_to_ptid (inf->pid)));
   else
     fprintf_filtered (stb,
-		      _("\tInferior %d [%s] will be killed.\n"), inf->num,
-		      target_pid_to_str (pid_to_ptid (inf->pid)));
+              _("\tInferior %d [%s] will be killed.\n"), inf->num,
+              target_pid_to_str (pid_to_ptid (inf->pid)));
 
   return 0;
 }
@@ -1278,7 +1283,7 @@ quit_confirm (void)
      it.  */
   if (deprecated_init_ui_hook)
     fprintf_filtered (stb, _("A debugging session is active.\n"
-			     "Do you still want to close the debugger?"));
+                 "Do you still want to close the debugger?"));
   else
     {
       fprintf_filtered (stb, _("A debugging session is active.\n\n"));
@@ -1313,7 +1318,7 @@ quit_target (void *arg)
     write_history (history_filename);
 
   do_final_cleanups (all_cleanups ());    /* Do any final cleanups before
-					     exiting.  */
+                         exiting.  */
   return 0;
 }
 
@@ -1341,7 +1346,7 @@ quit_force (char *args, int from_tty)
 
   /* We want to handle any quit errors and exit regardless.  */
   catch_errors (quit_target, &qt,
-	        "Quitting: ", RETURN_MASK_ALL);
+            "Quitting: ", RETURN_MASK_ALL);
 
   exit (exit_code);
 }
@@ -1394,11 +1399,11 @@ show_commands (char *args, int from_tty)
   if (args)
     {
       if (args[0] == '+' && args[1] == '\0')
-	/* "info editing +" should print from the stored position.  */
-	;
+    /* "info editing +" should print from the stored position.  */
+    ;
       else
-	/* "info editing <exp>" should print around command number <exp>.  */
-	num = (parse_and_eval_long (args) - history_base) - Hist_print / 2;
+    /* "info editing <exp>" should print around command number <exp>.  */
+    num = (parse_and_eval_long (args) - history_base) - Hist_print / 2;
     }
   /* "show commands" means print the last Hist_print commands.  */
   else
@@ -1415,7 +1420,7 @@ show_commands (char *args, int from_tty)
     {
       num = history_length - Hist_print;
       if (num < 0)
-	num = 0;
+    num = 0;
     }
 
   for (offset = num;
@@ -1423,7 +1428,7 @@ show_commands (char *args, int from_tty)
        offset++)
     {
       printf_filtered ("%5d  %s\n", history_base + offset,
-		       (history_get (history_base + offset))->line);
+               (history_get (history_base + offset))->line);
     }
 
   /* The next command we want to display is the next one that we haven't
@@ -1456,9 +1461,9 @@ set_history_size_command (char *args, int from_tty, struct cmd_list_element *c)
 
       /* Restore previous value before throwing.  */
       if (history_is_stifled ())
-	history_size_setshow_var = history_max_entries;
+    history_size_setshow_var = history_max_entries;
       else
-	history_size_setshow_var = UINT_MAX;
+    history_size_setshow_var = UINT_MAX;
 
       error (_("integer %u out of range"), new_value);
     }
@@ -1474,7 +1479,7 @@ void
 set_history (char *args, int from_tty)
 {
   printf_unfiltered (_("\"set history\" must be followed "
-		       "by the name of a history subcommand.\n"));
+               "by the name of a history subcommand.\n"));
   help_list (sethistlist, "set history ", -1, gdb_stdout);
 }
 
@@ -1484,7 +1489,7 @@ show_history (char *args, int from_tty)
   cmd_show_list (showhistlist, from_tty, "");
 }
 
-int info_verbose = 0;		/* Default verbose msgs off.  */
+int info_verbose = 0;        /* Default verbose msgs off.  */
 
 /* Called by do_setshow_command.  An elaborate joke.  */
 void
@@ -1525,12 +1530,12 @@ init_history (void)
 
       var = atoi (tmpenv);
       if (var < 0)
-	{
-	  /* Prefer ending up with no history rather than overflowing
-	     readline's history interface, which uses signed 'int'
-	     everywhere.  */
-	  var = 0;
-	}
+    {
+      /* Prefer ending up with no history rather than overflowing
+         readline's history interface, which uses signed 'int'
+         everywhere.  */
+      var = 0;
+    }
 
       history_size_setshow_var = var;
     }
@@ -1553,10 +1558,10 @@ init_history (void)
 #ifdef __MSDOS__
       /* No leading dots in file names are allowed on MSDOS.  */
       history_filename = concat (current_directory, "/_gdb_history",
-				 (char *)NULL);
+                 (char *)NULL);
 #else
       history_filename = concat (current_directory, "/.gdb_history",
-				 (char *)NULL);
+                 (char *)NULL);
 #endif
     }
   read_history (history_filename);
@@ -1564,34 +1569,34 @@ init_history (void)
 
 static void
 show_prompt (struct ui_file *file, int from_tty,
-	     struct cmd_list_element *c, const char *value)
+         struct cmd_list_element *c, const char *value)
 {
   fprintf_filtered (file, _("Gdb's prompt is \"%s\".\n"), value);
 }
 
 static void
 show_async_command_editing_p (struct ui_file *file, int from_tty,
-			      struct cmd_list_element *c, const char *value)
+                  struct cmd_list_element *c, const char *value)
 {
   fprintf_filtered (file, _("Editing of command lines as "
-			    "they are typed is %s.\n"),
-		    value);
+                "they are typed is %s.\n"),
+            value);
 }
 
 static void
 show_annotation_level (struct ui_file *file, int from_tty,
-		       struct cmd_list_element *c, const char *value)
+               struct cmd_list_element *c, const char *value)
 {
   fprintf_filtered (file, _("Annotation_level is %s.\n"), value);
 }
 
 static void
 show_exec_done_display_p (struct ui_file *file, int from_tty,
-			  struct cmd_list_element *c, const char *value)
+              struct cmd_list_element *c, const char *value)
 {
   fprintf_filtered (file, _("Notification of completion for "
-			    "asynchronous execution commands is %s.\n"),
-		    value);
+                "asynchronous execution commands is %s.\n"),
+            value);
 }
 
 /* "set" command for the gdb_datadir configuration variable.  */
@@ -1631,12 +1636,12 @@ init_main (void)
   rl_add_defun ("operate-and-get-next", gdb_rl_operate_and_get_next, 15);
 
   add_setshow_string_cmd ("prompt", class_support,
-			  &top_prompt,
-			  _("Set gdb's prompt"),
-			  _("Show gdb's prompt"),
-			  NULL, NULL,
-			  show_prompt,
-			  &setlist, &showlist);
+              &top_prompt,
+              _("Set gdb's prompt"),
+              _("Show gdb's prompt"),
+              NULL, NULL,
+              show_prompt,
+              &setlist, &showlist);
 
   add_com ("dont-repeat", class_support, dont_repeat_command, _("\
 Don't repeat this command.\nPrimarily \
@@ -1644,65 +1649,65 @@ used inside of user-defined commands that should not be repeated when\n\
 hitting return."));
 
   add_setshow_boolean_cmd ("editing", class_support,
-			   &async_command_editing_p, _("\
+               &async_command_editing_p, _("\
 Set editing of command lines as they are typed."), _("\
 Show editing of command lines as they are typed."), _("\
 Use \"on\" to enable the editing, and \"off\" to disable it.\n\
 Without an argument, command line editing is enabled.  To edit, use\n\
 EMACS-like or VI-like commands like control-P or ESC."),
-			   set_async_editing_command,
-			   show_async_command_editing_p,
-			   &setlist, &showlist);
+               set_async_editing_command,
+               show_async_command_editing_p,
+               &setlist, &showlist);
 
   add_setshow_boolean_cmd ("save", no_class, &write_history_p, _("\
 Set saving of the history record on exit."), _("\
 Show saving of the history record on exit."), _("\
 Use \"on\" to enable the saving, and \"off\" to disable it.\n\
 Without an argument, saving is enabled."),
-			   NULL,
-			   show_write_history_p,
-			   &sethistlist, &showhistlist);
+               NULL,
+               show_write_history_p,
+               &sethistlist, &showhistlist);
 
   add_setshow_uinteger_cmd ("size", no_class, &history_size_setshow_var, _("\
 Set the size of the command history,"), _("\
 Show the size of the command history,"), _("\
 ie. the number of previous commands to keep a record of."),
-			    set_history_size_command,
-			    show_history_size,
-			    &sethistlist, &showhistlist);
+                set_history_size_command,
+                show_history_size,
+                &sethistlist, &showhistlist);
 
   add_setshow_filename_cmd ("filename", no_class, &history_filename, _("\
 Set the filename in which to record the command history"), _("\
 Show the filename in which to record the command history"), _("\
 (the list of previous commands of which a record is kept)."),
-			    NULL,
-			    show_history_filename,
-			    &sethistlist, &showhistlist);
+                NULL,
+                show_history_filename,
+                &sethistlist, &showhistlist);
 
   add_setshow_boolean_cmd ("confirm", class_support, &confirm, _("\
 Set whether to confirm potentially dangerous operations."), _("\
 Show whether to confirm potentially dangerous operations."), NULL,
-			   NULL,
-			   show_confirm,
-			   &setlist, &showlist);
+               NULL,
+               show_confirm,
+               &setlist, &showlist);
 
   add_setshow_zinteger_cmd ("annotate", class_obscure, &annotation_level, _("\
 Set annotation_level."), _("\
 Show annotation_level."), _("\
 0 == normal;     1 == fullname (for use when running under emacs)\n\
 2 == output annotated suitably for use by programs that control GDB."),
-			    NULL,
-			    show_annotation_level,
-			    &setlist, &showlist);
+                NULL,
+                show_annotation_level,
+                &setlist, &showlist);
 
   add_setshow_boolean_cmd ("exec-done-display", class_support,
-			   &exec_done_display_p, _("\
+               &exec_done_display_p, _("\
 Set notification of completion for asynchronous execution commands."), _("\
 Show notification of completion for asynchronous execution commands."), _("\
 Use \"on\" to enable the notification, and \"off\" to disable it."),
-			   NULL,
-			   show_exec_done_display_p,
-			   &setlist, &showlist);
+               NULL,
+               show_exec_done_display_p,
+               &setlist, &showlist);
 
   add_setshow_filename_cmd ("data-directory", class_maintenance,
                            &gdb_datadir, _("Set GDB's data directory."),
@@ -1728,9 +1733,9 @@ gdb_init (char *argv0)
   make_final_cleanup (do_chdir_cleanup, xstrdup (current_directory));
 #endif
 
-  init_cmd_lists ();	    /* This needs to be done first.  */
+  init_cmd_lists ();        /* This needs to be done first.  */
   initialize_targets ();    /* Setup target_terminal macros for utils.c.  */
-  initialize_utils ();	    /* Make errors and warnings possible.  */
+  initialize_utils ();        /* Make errors and warnings possible.  */
 
   /* Here is where we call all the _initialize_foo routines.  */
   initialize_all_files ();
@@ -1745,7 +1750,7 @@ gdb_init (char *argv0)
   initialize_current_architecture ();
   init_cli_cmds();
   initialize_event_loop ();
-  init_main ();			/* But that omits this file!  Do it now.  */
+  init_main ();            /* But that omits this file!  Do it now.  */
 
   initialize_stdin_serial ();
 
@@ -1756,7 +1761,7 @@ gdb_init (char *argv0)
      set in a config file or implicitly set by reading an executable
      during startup.  */
   set_language (language_c);
-  expected_language = current_language;	/* Don't warn about the change.  */
+  expected_language = current_language;    /* Don't warn about the change.  */
 
   /* Allow another UI to initialize.  If the UI fails to initialize,
      and it wants GDB to revert to the CLI, it should clear

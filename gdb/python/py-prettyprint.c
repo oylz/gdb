@@ -703,7 +703,7 @@ apply_val_pretty_printer (struct type *type, const gdb_byte *valaddr,
   struct cleanup *cleanups;
   int result = 0;
   enum string_repr_result print_result;
-
+  
   /* No pretty-printer support for unavailable values.  */
   if (!value_bytes_available (val, embedded_offset, TYPE_LENGTH (type)))
     return 0;
@@ -723,7 +723,7 @@ apply_val_pretty_printer (struct type *type, const gdb_byte *valaddr,
       && VALUE_LVAL (value) != lval_internalvar_component
       && VALUE_LVAL (value) != lval_computed)
     set_value_address (value, address + embedded_offset);
-
+  
   val_obj = value_to_value_object (value);
   if (! val_obj)
     goto done;
@@ -732,15 +732,17 @@ apply_val_pretty_printer (struct type *type, const gdb_byte *valaddr,
   printer = find_pretty_printer (val_obj);
   Py_DECREF (val_obj);
   make_cleanup_py_decref (printer);
+  fprintf(stderr, "\t####XYZ, in apply_val_pretty_printer A\n");
   if (! printer || printer == Py_None)
     goto done;
-
+  fprintf(stderr, "\t####XYZ, in apply_val_pretty_printer B\n");
   /* If we are printing a map, we want some special formatting.  */
   hint = gdbpy_get_display_hint (printer);
+  fprintf(stderr, "\t####XYZ, in apply_val_pretty_printer, hint:[%s]\n", hint);
   make_cleanup (free_current_contents, &hint);
 
   /* Print the section */
-  print_result = print_string_repr (printer, hint, stream, recurse,
+  print_result = print_string_repr(printer, hint, stream, recurse,
 				    options, language, gdbarch);
   if (print_result != string_repr_error)
     print_children (printer, hint, stream, recurse, options, language,
