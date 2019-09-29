@@ -28,7 +28,7 @@
 #include "gdb_string.h"
 #include "gdb_assert.h"
 #include "floatformat.h"
-#include "symfile.h"		/* for overlay functions */
+#include "symfile.h"        /* for overlay functions */
 #include "regcache.h"
 #include "user-regs.h"
 #include "block.h"
@@ -49,7 +49,7 @@ you lose
 
 LONGEST
 extract_signed_integer (const gdb_byte *addr, int len,
-			enum bfd_endian byte_order)
+            enum bfd_endian byte_order)
 {
   LONGEST retval;
   const unsigned char *p;
@@ -59,7 +59,7 @@ extract_signed_integer (const gdb_byte *addr, int len,
   if (len > (int) sizeof (LONGEST))
     error (_("\
 That operation is not available on integers of more than %d bytes."),
-	   (int) sizeof (LONGEST));
+       (int) sizeof (LONGEST));
 
   /* Start at the most significant end of the integer, and work towards
      the least significant.  */
@@ -69,7 +69,7 @@ That operation is not available on integers of more than %d bytes."),
       /* Do the sign extension once at the start.  */
       retval = ((LONGEST) * p ^ 0x80) - 0x80;
       for (++p; p < endaddr; ++p)
-	retval = (retval << 8) | *p;
+    retval = (retval << 8) | *p;
     }
   else
     {
@@ -77,14 +77,14 @@ That operation is not available on integers of more than %d bytes."),
       /* Do the sign extension once at the start.  */
       retval = ((LONGEST) * p ^ 0x80) - 0x80;
       for (--p; p >= startaddr; --p)
-	retval = (retval << 8) | *p;
+    retval = (retval << 8) | *p;
     }
   return retval;
 }
 
 ULONGEST
 extract_unsigned_integer (const gdb_byte *addr, int len,
-			  enum bfd_endian byte_order)
+              enum bfd_endian byte_order)
 {
   ULONGEST retval;
   const unsigned char *p;
@@ -94,7 +94,7 @@ extract_unsigned_integer (const gdb_byte *addr, int len,
   if (len > (int) sizeof (ULONGEST))
     error (_("\
 That operation is not available on integers of more than %d bytes."),
-	   (int) sizeof (ULONGEST));
+       (int) sizeof (ULONGEST));
 
   /* Start at the most significant end of the integer, and work towards
      the least significant.  */
@@ -102,12 +102,12 @@ That operation is not available on integers of more than %d bytes."),
   if (byte_order == BFD_ENDIAN_BIG)
     {
       for (p = startaddr; p < endaddr; ++p)
-	retval = (retval << 8) | *p;
+    retval = (retval << 8) | *p;
     }
   else
     {
       for (p = endaddr - 1; p >= startaddr; --p)
-	retval = (retval << 8) | *p;
+    retval = (retval << 8) | *p;
     }
   return retval;
 }
@@ -119,7 +119,7 @@ That operation is not available on integers of more than %d bytes."),
 
 int
 extract_long_unsigned_integer (const gdb_byte *addr, int orig_len,
-			       enum bfd_endian byte_order, LONGEST *pval)
+                   enum bfd_endian byte_order, LONGEST *pval)
 {
   const gdb_byte *p;
   const gdb_byte *first_addr;
@@ -129,35 +129,35 @@ extract_long_unsigned_integer (const gdb_byte *addr, int orig_len,
   if (byte_order == BFD_ENDIAN_BIG)
     {
       for (p = addr;
-	   len > (int) sizeof (LONGEST) && p < addr + orig_len;
-	   p++)
-	{
-	  if (*p == 0)
-	    len--;
-	  else
-	    break;
-	}
+       len > (int) sizeof (LONGEST) && p < addr + orig_len;
+       p++)
+    {
+      if (*p == 0)
+        len--;
+      else
+        break;
+    }
       first_addr = p;
     }
   else
     {
       first_addr = addr;
       for (p = addr + orig_len - 1;
-	   len > (int) sizeof (LONGEST) && p >= addr;
-	   p--)
-	{
-	  if (*p == 0)
-	    len--;
-	  else
-	    break;
-	}
+       len > (int) sizeof (LONGEST) && p >= addr;
+       p--)
+    {
+      if (*p == 0)
+        len--;
+      else
+        break;
+    }
     }
 
   if (len <= (int) sizeof (LONGEST))
     {
       *pval = (LONGEST) extract_unsigned_integer (first_addr,
-						  sizeof (LONGEST),
-						  byte_order);
+                          sizeof (LONGEST),
+                          byte_order);
       return 1;
     }
 
@@ -173,8 +173,8 @@ extract_typed_address (const gdb_byte *buf, struct type *type)
   if (TYPE_CODE (type) != TYPE_CODE_PTR
       && TYPE_CODE (type) != TYPE_CODE_REF)
     internal_error (__FILE__, __LINE__,
-		    _("extract_typed_address: "
-		    "type is not a pointer or reference"));
+            _("extract_typed_address: "
+            "type is not a pointer or reference"));
 
   return gdbarch_pointer_to_address (get_type_arch (type), type, buf);
 }
@@ -184,7 +184,7 @@ extract_typed_address (const gdb_byte *buf, struct type *type)
 
 void
 store_signed_integer (gdb_byte *addr, int len,
-		      enum bfd_endian byte_order, LONGEST val)
+              enum bfd_endian byte_order, LONGEST val)
 {
   gdb_byte *p;
   gdb_byte *startaddr = addr;
@@ -195,24 +195,24 @@ store_signed_integer (gdb_byte *addr, int len,
   if (byte_order == BFD_ENDIAN_BIG)
     {
       for (p = endaddr - 1; p >= startaddr; --p)
-	{
-	  *p = val & 0xff;
-	  val >>= 8;
-	}
+    {
+      *p = val & 0xff;
+      val >>= 8;
+    }
     }
   else
     {
       for (p = startaddr; p < endaddr; ++p)
-	{
-	  *p = val & 0xff;
-	  val >>= 8;
-	}
+    {
+      *p = val & 0xff;
+      val >>= 8;
+    }
     }
 }
 
 void
 store_unsigned_integer (gdb_byte *addr, int len,
-			enum bfd_endian byte_order, ULONGEST val)
+            enum bfd_endian byte_order, ULONGEST val)
 {
   unsigned char *p;
   unsigned char *startaddr = (unsigned char *) addr;
@@ -223,18 +223,18 @@ store_unsigned_integer (gdb_byte *addr, int len,
   if (byte_order == BFD_ENDIAN_BIG)
     {
       for (p = endaddr - 1; p >= startaddr; --p)
-	{
-	  *p = val & 0xff;
-	  val >>= 8;
-	}
+    {
+      *p = val & 0xff;
+      val >>= 8;
+    }
     }
   else
     {
       for (p = startaddr; p < endaddr; ++p)
-	{
-	  *p = val & 0xff;
-	  val >>= 8;
-	}
+    {
+      *p = val & 0xff;
+      val >>= 8;
+    }
     }
 }
 
@@ -246,8 +246,8 @@ store_typed_address (gdb_byte *buf, struct type *type, CORE_ADDR addr)
   if (TYPE_CODE (type) != TYPE_CODE_PTR
       && TYPE_CODE (type) != TYPE_CODE_REF)
     internal_error (__FILE__, __LINE__,
-		    _("store_typed_address: "
-		    "type is not a pointer or reference"));
+            _("store_typed_address: "
+            "type is not a pointer or reference"));
 
   gdbarch_address_to_pointer (get_type_arch (type), type, buf, addr);
 }
@@ -273,20 +273,20 @@ value_of_register (int regnum, struct frame_info *frame)
   /* User registers lie completely outside of the range of normal
      registers.  Catch them early so that the target never sees them.  */
   if (regnum >= gdbarch_num_regs (gdbarch)
-		+ gdbarch_num_pseudo_regs (gdbarch))
+        + gdbarch_num_pseudo_regs (gdbarch))
     return value_of_user_reg (regnum, frame);
 
   frame_register (frame, regnum, &optim, &unavail,
-		  &lval, &addr, &realnum, raw_buffer);
+          &lval, &addr, &realnum, raw_buffer);
 
   reg_val = allocate_value (register_type (gdbarch, regnum));
 
   if (!optim && !unavail)
     memcpy (value_contents_raw (reg_val), raw_buffer,
-	    register_size (gdbarch, regnum));
+        register_size (gdbarch, regnum));
   else
     memset (value_contents_raw (reg_val), 0,
-	    register_size (gdbarch, regnum));
+        register_size (gdbarch, regnum));
 
   VALUE_LVAL (reg_val) = lval;
   set_value_address (reg_val, addr);
@@ -309,7 +309,7 @@ value_of_register_lazy (struct frame_info *frame, int regnum)
   struct value *reg_val;
 
   gdb_assert (regnum < (gdbarch_num_regs (gdbarch)
-			+ gdbarch_num_pseudo_regs (gdbarch)));
+            + gdbarch_num_pseudo_regs (gdbarch)));
 
   /* We should have a valid (i.e. non-sentinel) frame.  */
   gdb_assert (frame_id_p (get_frame_id (frame)));
@@ -325,7 +325,7 @@ value_of_register_lazy (struct frame_info *frame, int regnum)
    address it represents.  */
 CORE_ADDR
 unsigned_pointer_to_address (struct gdbarch *gdbarch,
-			     struct type *type, const gdb_byte *buf)
+                 struct type *type, const gdb_byte *buf)
 {
   enum bfd_endian byte_order = gdbarch_byte_order (gdbarch);
 
@@ -334,7 +334,7 @@ unsigned_pointer_to_address (struct gdbarch *gdbarch,
 
 CORE_ADDR
 signed_pointer_to_address (struct gdbarch *gdbarch,
-			   struct type *type, const gdb_byte *buf)
+               struct type *type, const gdb_byte *buf)
 {
   enum bfd_endian byte_order = gdbarch_byte_order (gdbarch);
 
@@ -345,7 +345,7 @@ signed_pointer_to_address (struct gdbarch *gdbarch,
    format in BUF.  */
 void
 unsigned_address_to_pointer (struct gdbarch *gdbarch, struct type *type,
-			     gdb_byte *buf, CORE_ADDR addr)
+                 gdb_byte *buf, CORE_ADDR addr)
 {
   enum bfd_endian byte_order = gdbarch_byte_order (gdbarch);
 
@@ -354,7 +354,7 @@ unsigned_address_to_pointer (struct gdbarch *gdbarch, struct type *type,
 
 void
 address_to_signed_pointer (struct gdbarch *gdbarch, struct type *type,
-			   gdb_byte *buf, CORE_ADDR addr)
+               gdb_byte *buf, CORE_ADDR addr)
 {
   enum bfd_endian byte_order = gdbarch_byte_order (gdbarch);
 
@@ -373,10 +373,10 @@ symbol_read_needs_frame (struct symbol *sym)
          we failed to consider one.  */
     case LOC_COMPUTED:
       /* FIXME: cagney/2004-01-26: It should be possible to
-	 unconditionally call the SYMBOL_COMPUTED_OPS method when available.
-	 Unfortunately DWARF 2 stores the frame-base (instead of the
-	 function) location in a function's symbol.  Oops!  For the
-	 moment enable this when/where applicable.  */
+     unconditionally call the SYMBOL_COMPUTED_OPS method when available.
+     Unfortunately DWARF 2 stores the frame-base (instead of the
+     function) location in a function's symbol.  Oops!  For the
+     moment enable this when/where applicable.  */
       return SYMBOL_COMPUTED_OPS (sym)->read_needs_frame (sym);
 
     case LOC_REGISTER:
@@ -456,76 +456,84 @@ default_read_var_value (struct symbol *var, struct frame_info *frame)
   if (symbol_read_needs_frame (var))
     gdb_assert (frame);
 
-  switch (SYMBOL_CLASS (var))
-    {
+  switch (SYMBOL_CLASS(var)){
     case LOC_CONST:
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_CONST\n");
       /* Put the constant back in target format.  */
       v = allocate_value (type);
       store_signed_integer (value_contents_raw (v), TYPE_LENGTH (type),
-			    gdbarch_byte_order (get_type_arch (type)),
-			    (LONGEST) SYMBOL_VALUE (var));
+                gdbarch_byte_order (get_type_arch (type)),
+                (LONGEST) SYMBOL_VALUE (var));
       VALUE_LVAL (v) = not_lval;
       return v;
 
     case LOC_LABEL:
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_LABEL\n");
       /* Put the constant back in target format.  */
       v = allocate_value (type);
-      if (overlay_debugging)
-	{
-	  CORE_ADDR addr
-	    = symbol_overlayed_address (SYMBOL_VALUE_ADDRESS (var),
-					SYMBOL_OBJ_SECTION (var));
+      if (overlay_debugging){
+        CORE_ADDR addr = symbol_overlayed_address(SYMBOL_VALUE_ADDRESS (var),
+                    SYMBOL_OBJ_SECTION (var));
 
-	  store_typed_address (value_contents_raw (v), type, addr);
-	}
-      else
-	store_typed_address (value_contents_raw (v), type,
-			      SYMBOL_VALUE_ADDRESS (var));
+        store_typed_address (value_contents_raw (v), type, addr);
+      }
+      else{
+        store_typed_address (value_contents_raw (v), type,
+                  SYMBOL_VALUE_ADDRESS (var));
+      }
       VALUE_LVAL (v) = not_lval;
       return v;
 
     case LOC_CONST_BYTES:
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_CONST_BYTES\n"); 
       v = allocate_value (type);
       memcpy (value_contents_raw (v), SYMBOL_VALUE_BYTES (var),
-	      TYPE_LENGTH (type));
+          TYPE_LENGTH (type));
       VALUE_LVAL (v) = not_lval;
       return v;
 
     case LOC_STATIC:
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_STATIC\n"); 
       v = allocate_value_lazy (type);
-      if (overlay_debugging)
-	addr = symbol_overlayed_address (SYMBOL_VALUE_ADDRESS (var),
-					 SYMBOL_OBJ_SECTION (var));
-      else
-	addr = SYMBOL_VALUE_ADDRESS (var);
+      if (overlay_debugging){
+        addr = symbol_overlayed_address (SYMBOL_VALUE_ADDRESS (var),
+                     SYMBOL_OBJ_SECTION (var));
+      }
+      else{
+        addr = SYMBOL_VALUE_ADDRESS (var);
+      }
       break;
 
     case LOC_ARG:
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_ARG\n"); 
       addr = get_frame_args_address (frame);
-      if (!addr)
-	error (_("Unknown argument list address for `%s'."),
-	       SYMBOL_PRINT_NAME (var));
+      if (!addr){
+        error (_("Unknown argument list address for `%s'."),
+            SYMBOL_PRINT_NAME (var));
+      }
       addr += SYMBOL_VALUE (var);
       v = allocate_value_lazy (type);
       break;
 
-    case LOC_REF_ARG:
-      {
-	struct value *ref;
-	CORE_ADDR argref;
+    case LOC_REF_ARG:{
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_REF_ARG\n"); 
+      struct value *ref;
+      CORE_ADDR argref;
 
-	argref = get_frame_args_address (frame);
-	if (!argref)
-	  error (_("Unknown argument list address for `%s'."),
-		 SYMBOL_PRINT_NAME (var));
-	argref += SYMBOL_VALUE (var);
-	ref = value_at (lookup_pointer_type (type), argref);
-	addr = value_as_address (ref);
-	v = allocate_value_lazy (type);
-	break;
+      argref = get_frame_args_address (frame);
+      if (!argref){
+          error (_("Unknown argument list address for `%s'."),
+              SYMBOL_PRINT_NAME (var));
       }
+      argref += SYMBOL_VALUE (var);
+      ref = value_at (lookup_pointer_type (type), argref);
+      addr = value_as_address (ref);
+      v = allocate_value_lazy (type);
+      break;
+    }
 
     case LOC_LOCAL:
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_LOCAL\n"); 
       addr = get_frame_locals_address (frame);
       addr += SYMBOL_VALUE (var);
       v = allocate_value_lazy (type);
@@ -533,97 +541,97 @@ default_read_var_value (struct symbol *var, struct frame_info *frame)
 
     case LOC_TYPEDEF:
       error (_("Cannot look up value of a typedef `%s'."),
-	     SYMBOL_PRINT_NAME (var));
+         SYMBOL_PRINT_NAME (var));
       break;
 
     case LOC_BLOCK:
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_BLOCK\n"); 
       v = allocate_value_lazy (type);
       if (overlay_debugging)
-	addr = symbol_overlayed_address
-	  (BLOCK_START (SYMBOL_BLOCK_VALUE (var)), SYMBOL_OBJ_SECTION (var));
+        addr = symbol_overlayed_address(BLOCK_START(SYMBOL_BLOCK_VALUE (var)), SYMBOL_OBJ_SECTION(var));
       else
-	addr = BLOCK_START (SYMBOL_BLOCK_VALUE (var));
+        addr = BLOCK_START (SYMBOL_BLOCK_VALUE (var));
       break;
 
     case LOC_REGISTER:
-    case LOC_REGPARM_ADDR:
-      {
-	int regno = SYMBOL_REGISTER_OPS (var)
-		      ->register_number (var, get_frame_arch (frame));
-	struct value *regval;
+    case LOC_REGPARM_ADDR:{
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_REGISTER/LOC_REGPARM_ADDR\n"); 
+      int regno = SYMBOL_REGISTER_OPS (var)
+              ->register_number (var, get_frame_arch (frame));
+      struct value *regval;
 
-	if (SYMBOL_CLASS (var) == LOC_REGPARM_ADDR)
-	  {
-	    regval = value_from_register (lookup_pointer_type (type),
-					  regno,
-					  frame);
+      if (SYMBOL_CLASS (var) == LOC_REGPARM_ADDR){
+        regval = value_from_register (lookup_pointer_type (type),
+                      regno,
+                      frame);
 
-	    if (regval == NULL)
-	      error (_("Value of register variable not available for `%s'."),
-	             SYMBOL_PRINT_NAME (var));
+        if (regval == NULL)
+          error (_("Value of register variable not available for `%s'."),
+                 SYMBOL_PRINT_NAME (var));
 
-	    addr = value_as_address (regval);
-	    v = allocate_value_lazy (type);
-	  }
-	else
-	  {
-	    regval = value_from_register (type, regno, frame);
-
-	    if (regval == NULL)
-	      error (_("Value of register variable not available for `%s'."),
-	             SYMBOL_PRINT_NAME (var));
-	    return regval;
-	  }
+        addr = value_as_address (regval);
+        v = allocate_value_lazy (type);
       }
+      else{
+        regval = value_from_register (type, regno, frame);
+
+        if (regval == NULL)
+          error (_("Value of register variable not available for `%s'."),
+                 SYMBOL_PRINT_NAME (var));
+        return regval;
+      }
+    }
       break;
 
     case LOC_COMPUTED:
+     fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_COMPUTED\n"); 
       /* FIXME: cagney/2004-01-26: It should be possible to
-	 unconditionally call the SYMBOL_COMPUTED_OPS method when available.
-	 Unfortunately DWARF 2 stores the frame-base (instead of the
-	 function) location in a function's symbol.  Oops!  For the
-	 moment enable this when/where applicable.  */
+     unconditionally call the SYMBOL_COMPUTED_OPS method when available.
+     Unfortunately DWARF 2 stores the frame-base (instead of the
+     function) location in a function's symbol.  Oops!  For the
+     moment enable this when/where applicable.  */
       return SYMBOL_COMPUTED_OPS (var)->read_variable (var, frame);
 
-    case LOC_UNRESOLVED:
-      {
-	struct minsym_lookup_data lookup_data;
-	struct minimal_symbol *msym;
-	struct obj_section *obj_section;
-
-	memset (&lookup_data, 0, sizeof (lookup_data));
-	lookup_data.name = SYMBOL_LINKAGE_NAME (var);
-
-	gdbarch_iterate_over_objfiles_in_search_order
-	  (get_objfile_arch (SYMBOL_SYMTAB (var)->objfile),
-	   minsym_lookup_iterator_cb, &lookup_data,
-	   SYMBOL_SYMTAB (var)->objfile);
-	msym = lookup_data.result;
-
-	if (msym == NULL)
-	  error (_("No global symbol \"%s\"."), SYMBOL_LINKAGE_NAME (var));
-	if (overlay_debugging)
-	  addr = symbol_overlayed_address (SYMBOL_VALUE_ADDRESS (msym),
-					   SYMBOL_OBJ_SECTION (msym));
-	else
-	  addr = SYMBOL_VALUE_ADDRESS (msym);
-
-	obj_section = SYMBOL_OBJ_SECTION (msym);
-	if (obj_section
-	    && (obj_section->the_bfd_section->flags & SEC_THREAD_LOCAL) != 0)
-	  addr = target_translate_tls_address (obj_section->objfile, addr);
-	v = allocate_value_lazy (type);
-      }
+    case LOC_UNRESOLVED:{
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_UNRESOLVED\n"); 
+      struct minsym_lookup_data lookup_data;
+      struct minimal_symbol *msym;
+      struct obj_section *obj_section;
+  
+      memset (&lookup_data, 0, sizeof (lookup_data));
+      lookup_data.name = SYMBOL_LINKAGE_NAME (var);
+  
+      gdbarch_iterate_over_objfiles_in_search_order
+        (get_objfile_arch (SYMBOL_SYMTAB (var)->objfile),
+         minsym_lookup_iterator_cb, &lookup_data,
+         SYMBOL_SYMTAB (var)->objfile);
+      msym = lookup_data.result;
+  
+      if (msym == NULL)
+        error (_("No global symbol \"%s\"."), SYMBOL_LINKAGE_NAME (var));
+      if (overlay_debugging)
+        addr = symbol_overlayed_address (SYMBOL_VALUE_ADDRESS (msym),
+                         SYMBOL_OBJ_SECTION (msym));
+      else
+        addr = SYMBOL_VALUE_ADDRESS (msym);
+  
+      obj_section = SYMBOL_OBJ_SECTION (msym);
+      if (obj_section
+          && (obj_section->the_bfd_section->flags & SEC_THREAD_LOCAL) != 0)
+        addr = target_translate_tls_address (obj_section->objfile, addr);
+      v = allocate_value_lazy (type);
+    }
       break;
 
     case LOC_OPTIMIZED_OUT:
+      fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_OPTIMIZED_OUT\n"); 
       return allocate_optimized_out_value (type);
 
     default:
       error (_("Cannot look up value of a botched symbol `%s'."),
-	     SYMBOL_PRINT_NAME (var));
+         SYMBOL_PRINT_NAME (var));
       break;
-    }
+  }
 
   VALUE_LVAL (v) = lval_memory;
   set_value_address (v, addr);
@@ -639,7 +647,8 @@ read_var_value (struct symbol *var, struct frame_info *frame)
 
   gdb_assert (lang != NULL);
   gdb_assert (lang->la_read_var_value != NULL);
-
+  fprintf(stderr, "\t\t####XYZ will call lang->la_read_var_value:%lx"
+        ", by nm command we know it is default_read_var_value function\n", lang->la_read_var_value);
   return lang->la_read_var_value (var, frame);
 }
 
@@ -647,7 +656,7 @@ read_var_value (struct symbol *var, struct frame_info *frame)
 
 struct value *
 default_value_from_register (struct type *type, int regnum,
-			     struct frame_info *frame)
+                 struct frame_info *frame)
 {
   struct gdbarch *gdbarch = get_frame_arch (frame);
   int len = TYPE_LENGTH (type);
@@ -704,15 +713,15 @@ read_frame_register_value (struct value *value, struct frame_info *frame)
       int reg_len = TYPE_LENGTH (value_type (regval)) - reg_offset;
 
       if (value_optimized_out (regval))
-	{
-	  set_value_optimized_out (value, 1);
-	  break;
-	}
+    {
+      set_value_optimized_out (value, 1);
+      break;
+    }
 
       /* If the register length is larger than the number of bytes
          remaining to copy, then only copy the appropriate bytes.  */
       if (reg_len > len)
-	reg_len = len;
+    reg_len = len;
 
       value_contents_copy (value, offset, regval, reg_offset, reg_len);
 
@@ -748,16 +757,16 @@ value_from_register (struct type *type, int regnum, struct frame_info *frame)
       VALUE_FRAME_ID (v) = get_frame_id (frame);
       VALUE_REGNUM (v) = regnum;
       ok = gdbarch_register_to_value (gdbarch, frame, regnum, type1,
-				      value_contents_raw (v), &optim,
-				      &unavail);
+                      value_contents_raw (v), &optim,
+                      &unavail);
 
       if (!ok)
-	{
-	  if (optim)
-	    set_value_optimized_out (v, 1);
-	  if (unavail)
-	    mark_value_bytes_unavailable (v, 0, TYPE_LENGTH (type));
-	}
+    {
+      if (optim)
+        set_value_optimized_out (v, 1);
+      if (unavail)
+        mark_value_bytes_unavailable (v, 0, TYPE_LENGTH (type));
+    }
     }
   else
     {

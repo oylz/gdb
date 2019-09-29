@@ -351,7 +351,7 @@ read_frame_arg (struct symbol *sym, struct frame_info *frame,
     {
       TRY_CATCH (except, RETURN_MASK_ERROR)
     {
-      val = read_var_value (sym, frame);
+      val = read_var_value(sym, frame);
     }
       if (!val)
     {
@@ -675,6 +675,7 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
             entryarg.entry_kind = print_entry_values_no;
         }
         else{
+          fprintf(stderr, "\t####XYZ will call read_frame_arg\n");
           read_frame_arg(sym, frame, &arg, &entryarg);
         }
   
