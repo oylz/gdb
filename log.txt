@@ -1,0 +1,159 @@
+(gdb) thread apply all bt
+        ****XYZ nnnn========beg in gdb/top.c::execute_command, pp:[thread apply all bt]=========================================
+        ****XYZ will call cmd_func, c->name:all, arg:[bt], c->func:4bd1a0
+        ****XYZ in cmd_func, by nm command, we know cmd->func is do_cfunc
+        ****XYZ in do_cfunc, c->function.cfunc:583640, by nm command, we know c->function.cfunc is [backtrace_command]
+        ****XYZ thread_apply_all_command, cmd:[bt], from_tty:1
+        ****XYZ target_pid_to_str
+        ****XYZ in thread_db_pid_to_str
+
+Thread 2 (XYZ_Thread 0x7fc148df0700 (LWP 23897)):
+        ****XYZ target_pid_to_str
+        ****XYZ in thread_db_pid_to_str
+        ****XYZ in thread_apply_all_command, tp->num:2, target_pid_to_str:XYZ_Thread 0x7fc148df0700 (LWP 23897), cmd:[bt]
+        ****XYZ nnnn========beg in gdb/top.c::execute_command, pp:[bt]=========================================
+        ****XYZ will call cmd_func, c->name:backtrace, arg:[(null)], c->func:4bd1a0
+        ****XYZ in cmd_func, by nm command, we know cmd->func is do_cfunc
+        ****XYZ in do_cfunc, c->function.cfunc:57ea20, by nm command, we know c->function.cfunc is [backtrace_command]
+        ****XYZ beg backtrace_command_1
+        ****XYZ mid backtrace_command_1
+#0  0x00007fc14973ff8d in read () from /lib64/libc.so.6
+#1  0x00007fc1496ccb14 in __GI__IO_file_underflow () from /lib64/libc.so.6
+#2  0x00007fc1496cdce2 in __GI__IO_default_uflow () from /lib64/libc.so.6
+#3  0x00007fc1496c854e in getc () from /lib64/libc.so.6
+#4  0x00000000004143dc in getchar () at /usr/include/bits/stdio.h:46
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ value->lazy
+        ####XYZ arg_name:this_fn, offset:0, addr:0, eoffset:0, content:24acca0
+                #### XYZ in common_val_print
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ value->lazy
+        ####XYZ arg_name:call_site, offset:0, addr:0, eoffset:0, content:17feaa0
+                #### XYZ in common_val_print
+#5  __cyg_profile_func_exit (this_fn=<optimized out>, call_site=<optimized out>) at instrument.cpp:188
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ value->lazy
+        ####XYZ arg_name:head, offset:0, addr:48def9f8, eoffset:0, content:1abe130
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ arg_name:chr, offset:0, addr:0, eoffset:0, content:23ef300
+                ****XYZ, vv:6e
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+                ####XYZ in val_print, will call language->la_val_print:630ca0, by nm command we know it is:c_val_print, valaddr:23ef300
+                        @@@@XYZ in c_val_print, TYPE_CODE_INT
+                                @@@@XYZ in c_val_print, TYPE_CODE_INT B
+                                @@@@XYZ in c_val_print, TYPE_CODE_INT, addr:23ef300, eoffset:0, vv:6e
+                ####XYZ in val_print, finish call language->la_val_print:630ca0, valaddr:23ef300
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ arg_name:xxxxinteger, offset:0, addr:48defa10, eoffset:0, content:2c26ba0
+                ****XYZ, vv:d3ed78e
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+                ####XYZ in val_print, will call language->la_val_print:630ca0, by nm command we know it is:c_val_print, valaddr:2c26ba0
+                        @@@@XYZ in c_val_print, TYPE_CODE_INT
+                                @@@@XYZ in c_val_print, TYPE_CODE_INT B
+                ####XYZ in val_print, finish call language->la_val_print:630ca0, valaddr:2c26ba0
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ value->lazy
+        ####XYZ arg_name:file, offset:0, addr:48defa08, eoffset:0, content:2c26d00
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ arg_name:num, offset:0, addr:48defa18, eoffset:0, content:26f7ad0
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+                ####XYZ in val_print, will call language->la_val_print:630ca0, by nm command we know it is:c_val_print, valaddr:26f7ad0
+                        @@@@XYZ in c_val_print, TYPE_CODE_INT
+                                @@@@XYZ in c_val_print, TYPE_CODE_INT B
+                ####XYZ in val_print, finish call language->la_val_print:630ca0, valaddr:26f7ad0
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ arg_name:xxxxnchr, offset:0, addr:0, eoffset:0, content:2c2ed30
+                ****XYZ, vv:6f
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+                ####XYZ in val_print, will call language->la_val_print:630ca0, by nm command we know it is:c_val_print, valaddr:2c2ed30
+                        @@@@XYZ in c_val_print, TYPE_CODE_INT
+                                @@@@XYZ in c_val_print, TYPE_CODE_INT B
+                                @@@@XYZ in c_val_print, TYPE_CODE_INT, addr:2c2ed30, eoffset:0, vv:6f
+                ####XYZ in val_print, finish call language->la_val_print:630ca0, valaddr:2c2ed30
+#6  0x000000000040820b in fun (head=..., chr=chr@entry=110 'n', xxxxinteger=xxxxinteger@entry=222222222, file=..., num=num@entry=12345, xxxxnchr=xxxxnchr@entry=111 'o') at main.cpp:40
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ arg_name:this, offset:0, addr:0, eoffset:0, content:1e63950
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+                ####XYZ in val_print, will call language->la_val_print:630ca0, by nm command we know it is:c_val_print, valaddr:1e63950
+                        @@@@XYZ in c_val_print, TYPE_CODE_PTR
+                ####XYZ in val_print, finish call language->la_val_print:630ca0, valaddr:1e63950
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ arg_name:f, offset:0, addr:0, eoffset:0, content:23fd830
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+                ####XYZ in val_print, will call language->la_val_print:630ca0, by nm command we know it is:c_val_print, valaddr:23fd830
+                        @@@@XYZ in c_val_print, TYPE_CODE_REF--TYPE_CODE_CHAR, TYPE_CODE(type):18
+                @@@@XYZ, generic_val_print
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+                ####XYZ in val_print, will call language->la_val_print:630ca0, by nm command we know it is:c_val_print, valaddr:246c700
+                        @@@@XYZ in c_val_print, TYPE_CODE_PTR
+                ####XYZ in val_print, finish call language->la_val_print:630ca0, valaddr:246c700
+                ####XYZ in val_print, finish call language->la_val_print:630ca0, valaddr:23fd830
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ arg_name:a, offset:0, addr:0, eoffset:0, content:2c2ede0
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+#7  0x000000000040ceeb in boost::_bi::list6<boost::_bi::value<char const*>, boost::_bi::value<int>, boost::_bi::value<int>, boost::_bi::value<std::string>, boost::_bi::value<unsigned long>, boost::_bi::value<int> >::operator()<int, int (*)(std::string const&, char, int, std::string const&, unsigned long, char), boost::_bi::list0> (this=this@entry=0x10f7930, f=@0x10f7928: 0x407e50 <fun(std::string const&, char, int, std::string const&, unsigned long, char)>,
+    a=...) at /usr/include/boost/bind/bind.hpp:586
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ arg_name:this, offset:0, addr:0, eoffset:0, content:242af40
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+                ####XYZ in val_print, will call language->la_val_print:630ca0, by nm command we know it is:c_val_print, valaddr:242af40
+                        @@@@XYZ in c_val_print, TYPE_CODE_PTR
+                ####XYZ in val_print, finish call language->la_val_print:630ca0, valaddr:242af40
+#8  0x000000000040f6d2 in operator() (this=0x10f7928) at /usr/include/boost/bind/bind_template.hpp:20
+        ####XYZ will call read_frame_arg
+                ####XYZ will call lang->la_read_var_value:529a60, by nm command we know it is default_read_var_value function
+                        ####XYZ in default_read_var_value: LOC_COMPUTED
+        ####XYZ arg_name:this, offset:0, addr:0, eoffset:0, content:2c26c50
+                #### XYZ in common_val_print
+                ####XYZ, in apply_val_pretty_printer A
+                ####XYZ in val_print, will call language->la_val_print:630ca0, by nm command we know it is:c_val_print, valaddr:2c26c50
+                        @@@@XYZ in c_val_print, TYPE_CODE_PTR
+                ####XYZ in val_print, finish call language->la_val_print:630ca0, valaddr:2c26c50
+#9  boost::detail::thread_data<boost::_bi::bind_t<int, int (*)(std::string const&, char, int, std::string const&, unsigned long, char), boost::_bi::list6<boost::_bi::value<char const*>, boost::_bi::value<int>, boost::_bi::value<int>, boost::_bi::value<std::string>, boost::_bi::value<unsigned long>, boost::_bi::value<int> > > >::run (this=0x10f7770) at /usr/include/boost/thread/detail/thread.hpp:117
+#10 0x00007fc14a9d227a in thread_proxy () from /lib64/libboost_thread-mt.so.1.53.0
+#11 0x00007fc149234dd5 in start_thread () from /lib64/libpthread.so.0
+#12 0x00007fc14974eead in clone () from /lib64/libc.so.6
+        ****XYZ end backtrace_command_1
+        ****XYZ will call execute_cmd_post_hook
+        ****XYZ uuuu========end in gdb/top.c::execute_command, pp:[bt]=========================================
+        ****XYZ target_pid_to_str
+        ****XYZ in thread_db_pid_to_str
+
+
