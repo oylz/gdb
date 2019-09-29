@@ -3975,6 +3975,7 @@ const struct symbol_computed_ops dwarf2_locexpr_funcs = {
 static struct value *
 loclist_read_variable (struct symbol *symbol, struct frame_info *frame)
 {
+  fprintf(stderr, "\t\t\t!!!!XYZ in loclist_read_variable\n");
   struct dwarf2_loclist_baton *dlbaton = SYMBOL_LOCATION_BATON (symbol);
   struct value *val;
   const gdb_byte *data;

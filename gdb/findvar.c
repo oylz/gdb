@@ -584,13 +584,16 @@ default_read_var_value (struct symbol *var, struct frame_info *frame)
       break;
 
     case LOC_COMPUTED:
-     fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_COMPUTED\n"); 
+     fprintf(stderr, "\t\t\t!!!!XYZ in default_read_var_value: LOC_COMPUTED,"
+        " SYMBOL_COMPUTED_OPS(var)->read_variable:%lx\n" 
+        ", by nm command we know it is loclist_read_variable\n",
+        SYMBOL_COMPUTED_OPS(var)->read_variable); 
       /* FIXME: cagney/2004-01-26: It should be possible to
      unconditionally call the SYMBOL_COMPUTED_OPS method when available.
      Unfortunately DWARF 2 stores the frame-base (instead of the
      function) location in a function's symbol.  Oops!  For the
      moment enable this when/where applicable.  */
-      return SYMBOL_COMPUTED_OPS (var)->read_variable (var, frame);
+      return SYMBOL_COMPUTED_OPS(var)->read_variable(var, frame);
 
     case LOC_UNRESOLVED:{
       fprintf(stderr, "\t\t\t####XYZ in default_read_var_value: LOC_UNRESOLVED\n"); 
