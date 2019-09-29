@@ -1743,7 +1743,8 @@ thread_db_pid_to_str (struct target_ops *ops, ptid_t ptid)
       thread_t tid;
 
       tid = thread_info->private->tid;
-      snprintf (buf, sizeof (buf), "Thread 0x%lx (LWP %ld)",
+      fprintf(stderr, "XYZ *****************\n");
+      snprintf (buf, sizeof (buf), "XYZ Thread 0x%lx (LWP %ld)",
 		tid, GET_LWP (ptid));
 
       return buf;
