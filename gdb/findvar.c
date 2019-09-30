@@ -585,7 +585,7 @@ default_read_var_value (struct symbol *var, struct frame_info *frame)
 
     case LOC_COMPUTED:
      fprintf(stderr, "\t\t\t!!!!XYZ in default_read_var_value: LOC_COMPUTED,"
-        " SYMBOL_COMPUTED_OPS(var)->read_variable:%lx\n" 
+        " SYMBOL_COMPUTED_OPS(var)->read_variable:%lx" 
         ", by nm command we know it is loclist_read_variable\n",
         SYMBOL_COMPUTED_OPS(var)->read_variable); 
       /* FIXME: cagney/2004-01-26: It should be possible to

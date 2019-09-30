@@ -665,7 +665,7 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
           ui_out_text(uiout, ", ");
         }
         ui_out_wrap_hint(uiout, "    ");
-  
+        fprintf(stderr, "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"); 
         if(!print_args){
             memset (&arg, 0, sizeof (arg));
             arg.sym = sym;
@@ -690,7 +690,7 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
             }
             print_frame_arg(&entryarg);
         }
-  
+        fprintf(stderr, "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");  
         xfree (arg.error);
         xfree (entryarg.error);
   
