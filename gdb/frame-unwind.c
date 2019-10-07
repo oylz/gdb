@@ -48,7 +48,7 @@ frame_unwind_init (struct obstack *obstack)
 {
   struct frame_unwind_table *table
     = OBSTACK_ZALLOC (obstack, struct frame_unwind_table);
-
+  fprintf(stderr, "frame_unwind_init\n");
   /* Start the table out with a few default sniffers.  OSABI code
      can't override this.  */
   table->list = OBSTACK_ZALLOC (obstack, struct frame_unwind_table_entry);
@@ -176,6 +176,7 @@ struct value *
 frame_unwind_got_register (struct frame_info *frame,
 			   int regnum, int new_regnum)
 {
+  fprintf(stderr, "frame_unwind_got_register\n");
   return value_of_register_lazy (frame, new_regnum);
 }
 

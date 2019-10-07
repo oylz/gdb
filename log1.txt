@@ -1,38 +1,37 @@
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- |XYZ will call read_frame_arg, stack.c:680
+ |XYZ will call read_frame_arg, stack.c:683
  | |XYZ in read_frame_arg A, will call read_var_value stack.c:354
  | | |XYZ in read_var_value, will call lang->la_read_var_value:51f4c0, by nm command we know it is default_read_var_value function, findvar.c:654
- | | | |XYZ in default_read_var_value: LOC_COMPUTED, SYMBOL_COMPUTED_OPS(var)->read_variable:5ecd10, by nm command we know it is loclist_read_variable, findvar.c:590
- | | | | |XYZ in loclist_read_variable, will call dwarf2_find_location_expression, dwarf2loc.c:3989
- | | | | |XYZ in loclist_read_variable, have called dwarf2_find_location_expression, will call dwarf2_evaluate_loc_desc_full, dwarf2loc.c:3997
- | | | | | |XYZ beg dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2156
- | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, will call dwarf_expr_eval, dwarf2loc.c:2178
+ | | | |XYZ in default_read_var_value: LOC_COMPUTED, SYMBOL_COMPUTED_OPS(var)->read_variable:5ecf20, by nm command we know it is loclist_read_variable, findvar.c:590
+ | | | | |XYZ in loclist_read_variable, will call dwarf2_find_location_expression, dwarf2loc.c:4003
+ | | | | |XYZ in loclist_read_variable, have called dwarf2_find_location_expression, will call dwarf2_evaluate_loc_desc_full, dwarf2loc.c:4011
+ | | | | | |XYZ beg dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2170
+ | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, will call dwarf_expr_eval, dwarf2loc.c:2192
  | | | | | | |XYZ in dwarf_expr_eval, will call execute_stack_op, dwarf2expr.c:362
  | | | | | | | |XYZ beg execute_stack_op, dwarf2expr.c:646
  | | | | | | | |XYZ in execute_stack_op, DW_OP_GNU_entry_value, op:243, dwarf2expr.c:1407
- | | | | | | | |XYZ in execute_stack_op, A kind_u.dwarf_reg:9, len:1, will call :5eb860, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function, dwarf2expr.c:1418
+ | | | | | | | |XYZ in execute_stack_op, A kind_u.dwarf_reg:9, len:1, will call :5eb8c0, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function, dwarf2expr.c:1418
  | | | | | | | | |XYZ, in dwarf_expr_push_dwarf_reg_entry_value A1, will call dwarf_expr_reg_to_entry_parameter, dwarf2loc.c:1154
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter A, dwarf2loc.c:1011
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter B, dwarf2loc.c:1029
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter C1, will call call_site_to_target_addr, dwarf2loc.c:1041
  | | | | | | | | | | |XYZ, in call_site_to_target_addr, will call dwarf2_evaluate_loc_desc_full, dwarf2loc.c:525
- | | | | | | | | | | | |XYZ beg dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2156
- | | | | | | | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, will call dwarf_expr_eval, dwarf2loc.c:2178
+ | | | | | | | | | | | |XYZ beg dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2170
+ | | | | | | | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, will call dwarf_expr_eval, dwarf2loc.c:2192
  | | | | | | | | | | | | |XYZ in dwarf_expr_eval, will call execute_stack_op, dwarf2expr.c:362
  | | | | | | | | | | | | | |XYZ beg execute_stack_op, dwarf2expr.c:646
  | | | | | | | | | | | | | |XYZ in execute_stack_op, DW_OP_breg0(112)-DW_OP_breg31, op:124, dwarf2expr.c:939
  | | | | | | | | | | | | | |XYZ end execute_stack_op, dwarf2expr.c:1553
  | | | | | | | | | | | | |XYZ in dwarf_expr_eval, have called execute_stack_op, dwarf2expr.c:364
- | | | | | | | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, have called dwarf_expr_eval, dwarf2loc.c:2180
+ | | | | | | | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, have called dwarf_expr_eval, dwarf2loc.c:2194
  | | | | | | | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, DWARF_VALUE_MEMORY
- | | | | | | | | | | | |XYZ end dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2337
+ | | | | | | | | | | | |XYZ end dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2351
  | | | | | | | | | | |XYZ, in call_site_to_target_addr, have called dwarf2_evaluate_loc_desc_full, dwarf2loc.c:532
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter C2, have called call_site_to_target_addr, dwarf2loc.c:1043
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter D, dwarf2loc.c:1060
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter E, dwarf2loc.c:1072
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter F, dwarf2loc.c:1085
  | | | | | | | | |XYZ, in dwarf_expr_push_dwarf_reg_entry_value A2, have called dwarf_expr_reg_to_entry_parameter, dwarf2loc.c:1157
- | | | | | | | | |XYZ, in dwarf_expr_push_dwarf_reg_entry_value B, data_src:7fb3321df25b, size:2, dwarf2loc.c:1161
+ | | | | | | | | |XYZ, in dwarf_expr_push_dwarf_reg_entry_value B, data_src:7fdb76d6025b, size:2, dwarf2loc.c:1161
  | | | | | | | | |XYZ, in dwarf_expr_push_dwarf_reg_entry_value C, will call dwarf_expr_eval, dwarf2loc.c:1178
  | | | | | | | | | |XYZ in dwarf_expr_eval, will call execute_stack_op, dwarf2expr.c:362
  | | | | | | | | | | |XYZ beg execute_stack_op, dwarf2expr.c:646
@@ -40,52 +39,68 @@
  | | | | | | | | | | |XYZ end execute_stack_op, dwarf2expr.c:1553
  | | | | | | | | | |XYZ in dwarf_expr_eval, have called execute_stack_op, dwarf2expr.c:364
  | | | | | | | | |XYZ, in dwarf_expr_push_dwarf_reg_entry_value D, have called dwarf_expr_eval, dwarf2loc.c:1180
- | | | | | | | |XYZ in execute_stack_op, A kind_u.dwarf_reg:9, len:1, have called :5eb860, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function, dwarf2expr.c:1427
+ | | | | | | | |XYZ in execute_stack_op, A kind_u.dwarf_reg:9, len:1, have called :5eb8c0, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function, dwarf2expr.c:1427
  | | | | | | | |XYZ in execute_stack_op, DW_OP_stack_value, dwarf2expr.c:876
  | | | | | | | |XYZ end execute_stack_op, dwarf2expr.c:1553
  | | | | | | |XYZ in dwarf_expr_eval, have called execute_stack_op, dwarf2expr.c:364
- | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, have called dwarf_expr_eval, dwarf2loc.c:2180
+ | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, have called dwarf_expr_eval, dwarf2loc.c:2194
  | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, DWARF_VALUE_STACK
- | | | | | |XYZ end dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2337
- | | | | |XYZ in loclist_read_variable, have called dwarf2_evaluate_loc_desc_full, dwarf2loc.c:4003
+ | | | | | |XYZ end dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2351
+ | | | | |XYZ in loclist_read_variable, have called dwarf2_evaluate_loc_desc_full, dwarf2loc.c:4017
+ | |XYZ in read_frame_arg B, have called read_var_value stack.c:356
+ | |XYZ in read_frame_arg C, will call ops->read_variable_at_entry:5ed020, by nm command we know it's loclist_read_variable_at_entry function, stack.c:375
+ | | |XYZ in loclist_read_variable_at_entry A, dwarf2loc.c:4039
+ | | |XYZ in loclist_read_variable_at_entry B, dwarf2loc.c:4041
+ | | |XYZ in loclist_read_variable_at_entry C, to do value_of_dwarf_block_entry, dwarf2loc.c:4044
+ | | | | |XYZ in value_of_dwarf_block_entry A, will call dwarf_block_to_dwarf_reg, dwarf2loc.c:1333
+ | | | | |XYZ in value_of_dwarf_block_entry B, have called dwarf_block_to_dwarf_reg, dwarf2loc.c:1335
+ | | | | |XYZ in value_of_dwarf_block_entry C1, will call value_of_dwarf_reg_entry, dwarf2loc.c:1337
+ | | | | | |XYZ in value_of_dwarf_reg_entry A, will call dwarf_expr_reg_to_entry_parameter, dwarf2loc.c:1273
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter A, dwarf2loc.c:1011
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter B, dwarf2loc.c:1029
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter C1, will call call_site_to_target_addr, dwarf2loc.c:1041
  | | | | | | | | | | |XYZ, in call_site_to_target_addr, will call dwarf2_evaluate_loc_desc_full, dwarf2loc.c:525
- | | | | | | | | | | | |XYZ beg dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2156
- | | | | | | | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, will call dwarf_expr_eval, dwarf2loc.c:2178
+ | | | | | | | | | | | |XYZ beg dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2170
+ | | | | | | | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, will call dwarf_expr_eval, dwarf2loc.c:2192
  | | | | | | | | | | | | |XYZ in dwarf_expr_eval, will call execute_stack_op, dwarf2expr.c:362
  | | | | | | | | | | | | | |XYZ beg execute_stack_op, dwarf2expr.c:646
  | | | | | | | | | | | | | |XYZ in execute_stack_op, DW_OP_breg0(112)-DW_OP_breg31, op:124, dwarf2expr.c:939
  | | | | | | | | | | | | | |XYZ end execute_stack_op, dwarf2expr.c:1553
  | | | | | | | | | | | | |XYZ in dwarf_expr_eval, have called execute_stack_op, dwarf2expr.c:364
- | | | | | | | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, have called dwarf_expr_eval, dwarf2loc.c:2180
+ | | | | | | | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, have called dwarf_expr_eval, dwarf2loc.c:2194
  | | | | | | | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, DWARF_VALUE_MEMORY
- | | | | | | | | | | | |XYZ end dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2337
+ | | | | | | | | | | | |XYZ end dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2351
  | | | | | | | | | | |XYZ, in call_site_to_target_addr, have called dwarf2_evaluate_loc_desc_full, dwarf2loc.c:532
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter C2, have called call_site_to_target_addr, dwarf2loc.c:1043
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter D, dwarf2loc.c:1060
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter E, dwarf2loc.c:1072
  | | | | | | | | | |XYZ, in dwarf_expr_reg_to_entry_parameter F, dwarf2loc.c:1085
- | | | | | |XYZ beg dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2156
- | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, will call dwarf_expr_eval, dwarf2loc.c:2178
+ | | | | | |XYZ in value_of_dwarf_reg_entry A, have called dwarf_expr_reg_to_entry_parameter, dwarf2loc.c:1276
+ | | | | | |XYZ in value_of_dwarf_reg_entry B, will call dwarf_entry_parameter_to_value, dwarf2loc.c:1278
+ | | | | | |XYZ beg dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2170
+ | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, will call dwarf_expr_eval, dwarf2loc.c:2192
  | | | | | | |XYZ in dwarf_expr_eval, will call execute_stack_op, dwarf2expr.c:362
  | | | | | | | |XYZ beg execute_stack_op, dwarf2expr.c:646
  | | | | | | | |XYZ in execute_stack_op, DW_OP_breg0(112)-DW_OP_breg31, op:127, dwarf2expr.c:939
  | | | | | | | |XYZ in execute_stack_op, DW_OP_stack_value, dwarf2expr.c:876
  | | | | | | | |XYZ end execute_stack_op, dwarf2expr.c:1553
  | | | | | | |XYZ in dwarf_expr_eval, have called execute_stack_op, dwarf2expr.c:364
- | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, have called dwarf_expr_eval, dwarf2loc.c:2180
+ | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, have called dwarf_expr_eval, dwarf2loc.c:2194
  | | | | | |XYZ in dwarf2_evaluate_loc_desc_full, DWARF_VALUE_STACK
- | | | | | |XYZ end dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2337
-    ####XYZ arg_name:xxxxnchr, offset:0, addr:0, eoffset:0, content:375d520
-        ****XYZ, vv:6f
+ | | | | | |XYZ end dwarf2_evaluate_loc_desc_full, dwarf2loc.c:2351
+ | | | | | |XYZ in value_of_dwarf_reg_entry B, have called dwarf_entry_parameter_to_value, dwarf2loc.c:1282
+ | | | | | |XYZ in value_of_dwarf_reg_entry C, have called dwarf_entry_parameter_to_value, dwarf2loc.c:1284
+ | | | | |XYZ in value_of_dwarf_block_entry C1, have called value_of_dwarf_reg_entry, dwarf2loc.c:1341
+ | |XYZ in read_frame_arg C, have called ops->read_variable_at_entry:5ed020, by nm command we know it's loclist_read_variable_at_entry function,  stack.c:377
+ | |XYZ arg_name:xxxxnchr, offset:0, addr:0, eoffset:0, content:2a11230
+ | | | |XYZ, vv:6f
         #### XYZ in common_val_print
         ####XYZ, in apply_val_pretty_printer A
-        ####XYZ in val_print, will call language->la_val_print:629c80, by nm command we know it is:c_val_print, valaddr:375d520
+        ####XYZ in val_print, will call language->la_val_print:629f00, by nm command we know it is:c_val_print, valaddr:2a11230
             @@@@XYZ in c_val_print, TYPE_CODE_INT
                 @@@@XYZ in c_val_print, TYPE_CODE_INT B
-                @@@@XYZ in c_val_print, TYPE_CODE_INT, addr:375d520, eoffset:0, vv:6f
-        ####XYZ in val_print, finish call language->la_val_print:629c80, valaddr:375d520
-vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-#6  0x0000000000408168 in fun (head=..., chr=chr@entry=110 'n', xxxxinteger=xxxxinteger@entry=222222222, file=..., num=num@entry=12345, xxxxnchr=xxxxnchr@entry=111 'o') at main.cpp:77
+                @@@@XYZ in c_val_print, TYPE_CODE_INT, addr:2a11230, eoffset:0, vv:6f
+        ####XYZ in val_print, finish call language->la_val_print:629f00, valaddr:2a11230
+
+
+

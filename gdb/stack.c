@@ -218,13 +218,13 @@ print_frame_arg(const struct frame_arg *arg){
     int eoffset = value_embedded_offset(arg->val);
     gdb_byte *content = value_contents_for_printing(arg->val);
 
-    fprintf(stderr, "\t####XYZ arg_name:%s, offset:%x, addr:%x, eoffset:%x, content:%lx\n", 
+    fprintf(stderr, " | |XYZ arg_name:%s, offset:%x, addr:%x, eoffset:%x, content:%lx\n", 
         arg_name, offset, (unsigned int)addr, eoffset, content);
     struct type *type = value_type(arg->val); 
     int tc = TYPE_CODE(type);
     if(tc == TYPE_CODE_INT){
         uint64_t vv = unpack_long(type, content + eoffset);
-        fprintf(stderr, "\t\t****XYZ, vv:%lx\n", vv);
+        fprintf(stderr, " | | | |XYZ, vv:%lx\n", vv);
     }
   }
   stb = mem_fileopen ();
@@ -351,7 +351,9 @@ read_frame_arg (struct symbol *sym, struct frame_info *frame,
     {
       TRY_CATCH (except, RETURN_MASK_ERROR)
     {
+      fprintf(stderr, " | |XYZ in read_frame_arg A, will call read_var_value %s:%d\n", __FILE__, __LINE__);
       val = read_var_value(sym, frame);
+      fprintf(stderr, " | |XYZ in read_frame_arg B, have called read_var_value %s:%d\n", __FILE__, __LINE__);
     }
       if (!val)
     {
@@ -370,7 +372,9 @@ read_frame_arg (struct symbol *sym, struct frame_info *frame,
       const struct symbol_computed_ops *ops;
 
       ops = SYMBOL_COMPUTED_OPS (sym);
+      fprintf(stderr, " | |XYZ in read_frame_arg C, will call ops->read_variable_at_entry:%lx, by nm command we know it's loclist_read_variable_at_entry function, %s:%d\n", ops->read_variable_at_entry, __FILE__, __LINE__);
       entryval = ops->read_variable_at_entry (sym, frame);
+      fprintf(stderr, " | |XYZ in read_frame_arg C, have called ops->read_variable_at_entry:%lx, by nm command we know it's loclist_read_variable_at_entry function,  %s:%d\n", ops->read_variable_at_entry, __FILE__, __LINE__);
     }
       if (!entryval)
     {
@@ -471,6 +475,7 @@ read_frame_arg (struct symbol *sym, struct frame_info *frame,
     {
       TRY_CATCH (except, RETURN_MASK_ERROR)
         {
+          fprintf(stderr, "\t####XYZ in read_frame_arg B, will call read_var_value %s:%d\n", __FILE__, __LINE__);
           val = read_var_value (sym, frame);
         }
       if (!val)
@@ -675,7 +680,7 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
             entryarg.entry_kind = print_entry_values_no;
         }
         else{
-          fprintf(stderr, "\t####XYZ will call read_frame_arg\n");
+          fprintf(stderr, " |XYZ will call read_frame_arg, %s:%d\n", __FILE__, __LINE__);
           read_frame_arg(sym, frame, &arg, &entryarg);
         }
   

@@ -379,7 +379,7 @@ execute_stack_op (const gdb_byte *exp, ULONGEST len, int addr_size,
   ctx->funcs = &dwarf2_frame_ctx_funcs;
 
   dwarf_expr_push_address (ctx, initial, initial_in_stack_memory);
-  dwarf_expr_eval (ctx, exp, len);
+  dwarf_expr_eval (ctx, exp, len, "");
 
   if (ctx->location == DWARF_VALUE_MEMORY)
     result = dwarf_expr_fetch_address (ctx, 0);

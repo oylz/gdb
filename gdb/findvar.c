@@ -584,10 +584,10 @@ default_read_var_value (struct symbol *var, struct frame_info *frame)
       break;
 
     case LOC_COMPUTED:
-     fprintf(stderr, "\t\t\t!!!!XYZ in default_read_var_value: LOC_COMPUTED,"
+     fprintf(stderr, " | | | |XYZ in default_read_var_value: LOC_COMPUTED,"
         " SYMBOL_COMPUTED_OPS(var)->read_variable:%lx" 
-        ", by nm command we know it is loclist_read_variable\n",
-        SYMBOL_COMPUTED_OPS(var)->read_variable); 
+        ", by nm command we know it is loclist_read_variable, %s:%d\n",
+        SYMBOL_COMPUTED_OPS(var)->read_variable, __FILE__, __LINE__); 
       /* FIXME: cagney/2004-01-26: It should be possible to
      unconditionally call the SYMBOL_COMPUTED_OPS method when available.
      Unfortunately DWARF 2 stores the frame-base (instead of the
@@ -650,8 +650,8 @@ read_var_value (struct symbol *var, struct frame_info *frame)
 
   gdb_assert (lang != NULL);
   gdb_assert (lang->la_read_var_value != NULL);
-  fprintf(stderr, "\t\t####XYZ will call lang->la_read_var_value:%lx"
-        ", by nm command we know it is default_read_var_value function\n", lang->la_read_var_value);
+  fprintf(stderr, " | | |XYZ in read_var_value, will call lang->la_read_var_value:%lx"
+        ", by nm command we know it is default_read_var_value function, %s:%d\n", lang->la_read_var_value, __FILE__, __LINE__);
   return lang->la_read_var_value (var, frame);
 }
 

@@ -256,7 +256,7 @@ void dwarf_expr_push_address (struct dwarf_expr_context *ctx,
 			      CORE_ADDR value,
 			      int in_stack_memory);
 void dwarf_expr_eval (struct dwarf_expr_context *ctx, const gdb_byte *addr,
-		      size_t len);
+		      size_t len, char *pre);
 struct value *dwarf_expr_fetch (struct dwarf_expr_context *ctx, int n);
 CORE_ADDR dwarf_expr_fetch_address (struct dwarf_expr_context *ctx, int n);
 int dwarf_expr_fetch_in_stack_memory (struct dwarf_expr_context *ctx, int n);

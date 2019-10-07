@@ -31,7 +31,7 @@
 /* Local prototypes.  */
 
 static void execute_stack_op (struct dwarf_expr_context *,
-			      const gdb_byte *, const gdb_byte *);
+			      const gdb_byte *, const gdb_byte *, char *pre);
 
 /* Cookie for gdbarch data.  */
 
@@ -357,11 +357,11 @@ add_piece (struct dwarf_expr_context *ctx, ULONGEST size, ULONGEST offset)
 
 void
 dwarf_expr_eval (struct dwarf_expr_context *ctx, const gdb_byte *addr,
-		 size_t len){
+		 size_t len, char *pre){
   int old_recursion_depth = ctx->recursion_depth;
-
-  execute_stack_op(ctx, addr, addr + len);
-
+  fprintf(stderr, "%s | | | | | | |XYZ in dwarf_expr_eval, will call execute_stack_op, %s:%d\n", pre, __FILE__, __LINE__);
+  execute_stack_op(ctx, addr, addr + len, pre);
+  fprintf(stderr, "%s | | | | | | |XYZ in dwarf_expr_eval, have called execute_stack_op, %s:%d\n", pre, __FILE__, __LINE__);
   /* CTX RECURSION_DEPTH becomes invalid if an exception was thrown here.  */
 
   gdb_assert (ctx->recursion_depth == old_recursion_depth);
@@ -632,7 +632,7 @@ dwarf_block_to_sp_offset (struct gdbarch *gdbarch, const gdb_byte *buf,
 
 static void
 execute_stack_op(struct dwarf_expr_context *ctx,
-		  const gdb_byte *op_ptr, const gdb_byte *op_end)
+		  const gdb_byte *op_ptr, const gdb_byte *op_end, char *pre)
 {
   enum bfd_endian byte_order = gdbarch_byte_order (ctx->gdbarch);
   /* Old-style "untyped" DWARF values need special treatment in a
@@ -643,7 +643,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
      different (in the `==' sense) from any base type coming from the
      CU.  */
   struct type *address_type = dwarf_expr_address_type (ctx);
-
+  fprintf(stderr, "%s | | | | | | | |XYZ beg execute_stack_op, %s:%d\n", pre, __FILE__, __LINE__);
   ctx->location = DWARF_VALUE_MEMORY;
   ctx->initialized = 1;  /* Default is initialized.  */
 
@@ -703,13 +703,13 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	case DW_OP_lit29:
 	case DW_OP_lit30:
 	case DW_OP_lit31:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_lit0-DW_OP_lit31\n");
+      fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_lit0-DW_OP_lit31\n", pre);
 	  result = op - DW_OP_lit0;
 	  result_val = value_from_ulongest (address_type, result);
 	  break;
 
 	case DW_OP_addr:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_addr\n");
+      fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_addr\n", pre);
 	  result = extract_unsigned_integer (op_ptr,
 					     ctx->addr_size, byte_order);
 	  op_ptr += ctx->addr_size;
@@ -723,33 +723,33 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  break;
 
 	case DW_OP_GNU_addr_index:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_GNU_addr_index\n");
+      fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_GNU_addr_index\n", pre);
 	  op_ptr = safe_read_uleb128 (op_ptr, op_end, &uoffset);
 	  result = (ctx->funcs->get_addr_index) (ctx->baton, uoffset);
 	  result += ctx->offset;
 	  result_val = value_from_ulongest (address_type, result);
 	  break;
 	case DW_OP_GNU_const_index:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_GNU_const_index\n");
+      fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_GNU_const_index\n", pre);
 	  op_ptr = safe_read_uleb128 (op_ptr, op_end, &uoffset);
 	  result = (ctx->funcs->get_addr_index) (ctx->baton, uoffset);
 	  result_val = value_from_ulongest (address_type, result);
 	  break;
 
 	case DW_OP_const1u:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_const1u\n");
+      fprintf(stderr, "                ****XYZ in execute_stack_op, DW_OP_const1u\n");
 	  result = extract_unsigned_integer (op_ptr, 1, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 1;
 	  break;
 	case DW_OP_const1s:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_const1s\n");
+      fprintf(stderr, "                ****XYZ in execute_stack_op, DW_OP_const1s\n");
 	  result = extract_signed_integer (op_ptr, 1, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 1;
 	  break;
 	case DW_OP_const2u:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_const2u\n");
+      fprintf(stderr, "                ****XYZ in execute_stack_op, DW_OP_const2u\n");
 	  result = extract_unsigned_integer (op_ptr, 2, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 2;
@@ -873,7 +873,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  goto no_push;
 
 	case DW_OP_stack_value:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_stack_value\n");
+      fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_stack_value, %s:%d\n", pre, __FILE__, __LINE__);
 	  ctx->location = DWARF_VALUE_STACK;
 	  dwarf_expr_require_composition (op_ptr, op_end, "DW_OP_stack_value");
 	  goto no_push;
@@ -936,7 +936,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	case DW_OP_breg30:
 	case DW_OP_breg31:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_breg0(%d)-DW_OP_breg31, op:%d\n", DW_OP_breg0, op);
+        fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_breg0(%d)-DW_OP_breg31, op:%d, %s:%d\n", pre, DW_OP_breg0, op, __FILE__, __LINE__);
 	    op_ptr = safe_read_sleb128 (op_ptr, op_end, &offset);
 	    result = (ctx->funcs->read_reg) (ctx->baton, op - DW_OP_breg0);
 	    result += offset;
@@ -970,7 +970,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
                get_frame_base_address(), and then implement a dwarf2
                specific this_base method.  */
 	    (ctx->funcs->get_frame_base) (ctx->baton, &datastart, &datalen);
-	    dwarf_expr_eval (ctx, datastart, datalen);
+	    dwarf_expr_eval (ctx, datastart, datalen, pre);
 	    if (ctx->location == DWARF_VALUE_MEMORY)
 	      result = dwarf_expr_fetch_address (ctx, 0);
 	    else if (ctx->location == DWARF_VALUE_REGISTER)
@@ -1404,7 +1404,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  goto no_push;
 	
 	case DW_OP_GNU_entry_value:{
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_GNU_entry_value, op:%d\n", op);
+        fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_GNU_entry_value, op:%d, %s:%d\n", pre, op, __FILE__, __LINE__);
 	    uint64_t len;
 	    CORE_ADDR deref_size;
 	    union call_site_parameter_u kind_u;
@@ -1414,14 +1414,18 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	      error (_("DW_OP_GNU_entry_value: too few bytes available."));
 
 	    kind_u.dwarf_reg = dwarf_block_to_dwarf_reg(op_ptr, op_ptr + len);
-        fprintf(stderr, "\t\t\t\t\t****XYZ A kind_u.dwarf_reg:%d, len:%d, ctx->funcs->push_dwarf_reg_entry_value:%lx, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function\n", 
-            kind_u.dwarf_reg, len, ctx->funcs->push_dwarf_reg_entry_value);
+        fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, A kind_u.dwarf_reg:%d, len:%d, will call :%lx, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function, %s:%d\n", 
+            pre, kind_u.dwarf_reg, len, ctx->funcs->push_dwarf_reg_entry_value, __FILE__, __LINE__);
 	    if (kind_u.dwarf_reg != -1){
 		  op_ptr += len;
 		  ctx->funcs->push_dwarf_reg_entry_value(ctx,
 						  CALL_SITE_PARAMETER_DWARF_REG,
 							kind_u,
 							-1 /* deref_size */);
+          fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, A kind_u.dwarf_reg:%d, len:%d, have called :%lx, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function, %s:%d\n", 
+            pre,
+            kind_u.dwarf_reg, len, ctx->funcs->push_dwarf_reg_entry_value, __FILE__, __LINE__);
+
 		  goto no_push;
 	    }
 
@@ -1546,7 +1550,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
      have implicit pointers in contexts where pieces are invalid.  */
   if (ctx->location == DWARF_VALUE_IMPLICIT_POINTER)
     add_piece (ctx, 8 * ctx->addr_size, 0);
-
+  fprintf(stderr, "%s | | | | | | | |XYZ end execute_stack_op, %s:%d\n", pre, __FILE__, __LINE__);
 abort_expression:
   ctx->recursion_depth--;
   gdb_assert (ctx->recursion_depth >= 0);
