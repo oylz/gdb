@@ -149,7 +149,8 @@ c_val_print (struct type *type, const gdb_byte *valaddr,
   CHECK_TYPEDEF (type);
   switch (TYPE_CODE (type)){
     case TYPE_CODE_ARRAY:
-      fprintf(stderr, "\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_ARRAY\n");
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+        "TYPE_CODE_ARRAY, %s:%d\n", __FILE__, __LINE__);
       unresolved_elttype = TYPE_TARGET_TYPE (type);
       elttype = check_typedef (unresolved_elttype);
       if (TYPE_LENGTH (type) > 0 && TYPE_LENGTH (unresolved_elttype) > 0){
@@ -235,12 +236,14 @@ c_val_print (struct type *type, const gdb_byte *valaddr,
       goto print_unpacked_pointer;
 
     case TYPE_CODE_METHODPTR:
-      fprintf(stderr, "\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_METHODPTR\n");
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+        "TYPE_CODE_METHODPTR, %s:%d\n", __FILE__, __LINE__);
       cplus_print_method_ptr (valaddr + embedded_offset, type, stream);
       break;
 
     case TYPE_CODE_PTR:
-      fprintf(stderr, "\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_PTR\n");
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+        "TYPE_CODE_PTR, :%s:%d\n", __FILE__, __LINE__);
       if (options->format && options->format != 's'){
         val_print_scalar_formatted (type, valaddr, embedded_offset,
                       original_value, options, 0, stream);
@@ -349,14 +352,16 @@ print_unpacked_pointer:
       break;
 
     case TYPE_CODE_UNION:
-      fprintf(stderr, "\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_UNION\n");
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+        "TYPE_CODE_UNION, %s:%d\n", __FILE__, __LINE__);
       if (recurse && !options->unionprint){
       fprintf_filtered (stream, "{...}");
       break;
     }
       /* Fall through.  */
     case TYPE_CODE_STRUCT:
-      fprintf(stderr, "\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_STRUCT\n");
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+        "TYPE_CODE_STRUCT, %s:%d\n", __FILE__, __LINE__);
       /*FIXME: Abstract this away.  */
       if (options->vtblprint && cp_is_vtbl_ptr_type (type)){
           /* Print the unmangled name if desired.  */
@@ -383,27 +388,33 @@ print_unpacked_pointer:
       break;
 
     case TYPE_CODE_INT:
-      fprintf(stderr, "\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_INT\n");
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+        "TYPE_CODE_INT, %s:%d\n", __FILE__, __LINE__);
       if (options->format || options->output_format){
         struct value_print_options opts = *options;
-        fprintf(stderr, "\t\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_INT A\n");
+        fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+            "TYPE_CODE_INT A, %s:%d\n", __FILE__, __LINE__);
         opts.format = (options->format ? options->format
              : options->output_format);
         val_print_scalar_formatted (type, valaddr, embedded_offset,
                       original_value, &opts, 0, stream);
       }
       else{
-        fprintf(stderr, "\t\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_INT B\n");
+        fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+            "TYPE_CODE_INT, will call val_print_type_code_int, %s:%d\n", __FILE__, __LINE__);
         val_print_type_code_int(type, valaddr + embedded_offset,
                    stream);
+        fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+            "TYPE_CODE_INT, have called val_print_type_code_int, %s:%d\n", __FILE__, __LINE__);
         /* C and C++ has no single byte int type, char is used
          instead.  Since we don't know whether the value is really
          intended to be used as an integer or a character, print
          the character equivalent as well.  */
         if (c_textual_element_type (unresolved_type, options->format)){
           uint64_t vv = unpack_long(type, valaddr + embedded_offset);
-          fprintf(stderr, "\t\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_INT, addr:%lx, eoffset:%lx, vv:%lx\n", 
-                valaddr, embedded_offset, vv);
+          fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+            "TYPE_CODE_INT, addr:%lx, eoffset:%lx, vv:%lx, %s:%d\n", 
+                valaddr, embedded_offset, vv, __FILE__, __LINE__);
           fputs_filtered (" ", stream);
           LA_PRINT_CHAR (unpack_long(type, valaddr + embedded_offset),
                  unresolved_type, stream);
@@ -412,7 +423,8 @@ print_unpacked_pointer:
       break;
 
     case TYPE_CODE_MEMBERPTR:
-      fprintf(stderr, "\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_MEMBERPTR\n");
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+        "TYPE_CODE_MEMBERPTR, %s:%d\n", __FILE__, __LINE__);
       if (!options->format){
       cp_print_class_member (valaddr + embedded_offset, type, stream, "&");
       break;
@@ -434,7 +446,9 @@ print_unpacked_pointer:
     case TYPE_CODE_COMPLEX:
     case TYPE_CODE_CHAR:
     default:
-      fprintf(stderr, "\t\t\t@@@@XYZ in c_val_print, TYPE_CODE_REF--TYPE_CODE_CHAR, TYPE_CODE(type):%d\n", TYPE_CODE(type));
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in c_val_print, "
+        "TYPE_CODE_REF--TYPE_CODE_CHAR, TYPE_CODE(type):%d, %s:%d\n", 
+        TYPE_CODE(type), __FILE__, __LINE__);
       generic_val_print(type, valaddr, embedded_offset, address,
              stream, recurse, original_value, options,
              &c_decorations);

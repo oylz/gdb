@@ -218,13 +218,19 @@ print_frame_arg(const struct frame_arg *arg){
     int eoffset = value_embedded_offset(arg->val);
     gdb_byte *content = value_contents_for_printing(arg->val);
 
-    fprintf(stderr, " | |XYZ arg_name:%s, offset:%x, addr:%x, eoffset:%x, content:%lx\n", 
+    fprintf(stderr, "\033[0m----------------------------------------------------------, %s:%d\n",
+        __FILE__, __LINE__);
+    fprintf(stderr, " \033[31m| \033[32m|XYZ in print_frame_arg, arg_name:%s, offset:%x, addr:%x, eoffset:%x, \033[32;7mcontent:%lx", 
         arg_name, offset, (unsigned int)addr, eoffset, content);
     struct type *type = value_type(arg->val); 
+    CHECK_TYPEDEF (type);
     int tc = TYPE_CODE(type);
     if(tc == TYPE_CODE_INT){
         uint64_t vv = unpack_long(type, content + eoffset);
-        fprintf(stderr, " | | | |XYZ, vv:%lx\n", vv);
+        fprintf(stderr, "(type is TYPE_CODE_INT, value:%lx)\033[0m\033[32m, %s:%d\n", vv, __FILE__, __LINE__);
+    }
+    else{
+        fprintf(stderr, "\033[0m\033[32m, %s:%d\n", __FILE__, __LINE__);
     }
   }
   stb = mem_fileopen ();
@@ -294,8 +300,11 @@ print_frame_arg(const struct frame_arg *arg){
 
             /* True in "summary" mode, false otherwise.  */
             opts.summary = !strcmp (print_frame_arguments, "scalars");
-
+            fprintf(stderr, " \033[31m| \033[32m|XYZ in print_frame_arg, will call common_val_print, %s:%d\n",
+                 __FILE__, __LINE__);
             common_val_print(arg->val, stb, 2, &opts, language);
+            fprintf(stderr, " \033[31m| \033[32m|XYZ in print_frame_arg, have called common_val_print, %s:%d\n",
+                 __FILE__, __LINE__);
         }
       }
       if(except.message){
@@ -351,9 +360,9 @@ read_frame_arg (struct symbol *sym, struct frame_info *frame,
     {
       TRY_CATCH (except, RETURN_MASK_ERROR)
     {
-      fprintf(stderr, " | |XYZ in read_frame_arg A, will call read_var_value %s:%d\n", __FILE__, __LINE__);
+      fprintf(stderr, " \033[31m| \033[32m|XYZ in read_frame_arg A, will call read_var_value %s:%d\n", __FILE__, __LINE__);
       val = read_var_value(sym, frame);
-      fprintf(stderr, " | |XYZ in read_frame_arg B, have called read_var_value %s:%d\n", __FILE__, __LINE__);
+      fprintf(stderr, " \033[31m| \033[32m|XYZ in read_frame_arg B, have called read_var_value %s:%d\n", __FILE__, __LINE__);
     }
       if (!val)
     {
@@ -372,9 +381,9 @@ read_frame_arg (struct symbol *sym, struct frame_info *frame,
       const struct symbol_computed_ops *ops;
 
       ops = SYMBOL_COMPUTED_OPS (sym);
-      fprintf(stderr, " | |XYZ in read_frame_arg C, will call ops->read_variable_at_entry:%lx, by nm command we know it's loclist_read_variable_at_entry function, %s:%d\n", ops->read_variable_at_entry, __FILE__, __LINE__);
+      fprintf(stderr, " \033[31m| \033[32m|XYZ in read_frame_arg C, will call ops->read_variable_at_entry:%lx, by nm command we know it's loclist_read_variable_at_entry function, %s:%d\n", ops->read_variable_at_entry, __FILE__, __LINE__);
       entryval = ops->read_variable_at_entry (sym, frame);
-      fprintf(stderr, " | |XYZ in read_frame_arg C, have called ops->read_variable_at_entry:%lx, by nm command we know it's loclist_read_variable_at_entry function,  %s:%d\n", ops->read_variable_at_entry, __FILE__, __LINE__);
+      fprintf(stderr, " \033[31m| \033[32m|XYZ in read_frame_arg C, have called ops->read_variable_at_entry:%lx, by nm command we know it's loclist_read_variable_at_entry function,  %s:%d\033[0m\n", ops->read_variable_at_entry, __FILE__, __LINE__);
     }
       if (!entryval)
     {
@@ -670,7 +679,7 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
           ui_out_text(uiout, ", ");
         }
         ui_out_wrap_hint(uiout, "    ");
-        fprintf(stderr, "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"); 
+        fprintf(stderr, "\033[0m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^, %s:%d\n", __FILE__, __LINE__); 
         if(!print_args){
             memset (&arg, 0, sizeof (arg));
             arg.sym = sym;
@@ -680,7 +689,7 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
             entryarg.entry_kind = print_entry_values_no;
         }
         else{
-          fprintf(stderr, " |XYZ will call read_frame_arg, %s:%d\n", __FILE__, __LINE__);
+          fprintf(stderr, " \033[31m|XYZ will call read_frame_arg, %s:%d\n", __FILE__, __LINE__);
           read_frame_arg(sym, frame, &arg, &entryarg);
         }
   
@@ -695,7 +704,7 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
             }
             print_frame_arg(&entryarg);
         }
-        fprintf(stderr, "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n");  
+        fprintf(stderr, "\033[0mvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv, %s:%d\n", __FILE__, __LINE__);  
         xfree (arg.error);
         xfree (entryarg.error);
   

@@ -740,9 +740,11 @@ val_print (struct type *type, const gdb_byte *valaddr, int embedded_offset,
   }
 
   if (!options->raw){
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m|XYZ in val_print, will call apply_val_pretty_printer, %s:%d\n", __FILE__, __LINE__);
       ret = apply_val_pretty_printer(type, valaddr, embedded_offset,
                       address, stream, recurse,
                       val, options, language);
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m|XYZ in val_print, have called apply_val_pretty_printer, %s:%d\n", __FILE__, __LINE__);
       if(ret){
         return;
       }
@@ -756,14 +758,17 @@ val_print (struct type *type, const gdb_byte *valaddr, int embedded_offset,
   }
 
   TRY_CATCH(except, RETURN_MASK_ERROR){
-      fprintf(stderr, "\t\t####XYZ in val_print, will call language->la_val_print:%lx"
-        ", by nm command we know it is:c_val_print, valaddr:%lx\n", 
-        language->la_val_print, valaddr);
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m|XYZ in val_print, "
+        "will call language->la_val_print:%lx"
+        ", by nm command we know it is:c_val_print, valaddr:%lx, %s:%d\n", 
+        language->la_val_print, valaddr, __FILE__, __LINE__);
       language->la_val_print(type, valaddr, embedded_offset, address,
                   stream, recurse, val,
                   &local_opts);
-      fprintf(stderr, "\t\t####XYZ in val_print, finish call language->la_val_print:%lx, valaddr:%lx\n",
-        language->la_val_print, valaddr);
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m|XYZ in val_print, "
+        "have called language->la_val_print:%lx,"
+        ", by nm command we know it is:c_val_print, valaddr:%lx, %s:%d\n",
+        language->la_val_print, valaddr, __FILE__, __LINE__);
   }
   if(except.reason < 0){
     fprintf_filtered (stream, _("<error reading variable>"));
@@ -814,7 +819,6 @@ common_val_print (struct value *val, struct ui_file *stream, int recurse,
           const struct value_print_options *options,
           const struct language_defn *language)
 {
-  fprintf(stderr, "\t\t#### XYZ in common_val_print\n");
   if (!value_check_printable(val, stream, options))
     return;
 
@@ -826,10 +830,12 @@ common_val_print (struct value *val, struct ui_file *stream, int recurse,
     val = ada_to_fixed_value (val);
   }
 
+  fprintf(stderr, " \033[31m| \033[32m| \033[33m|XYZ in common_val_print, will call val_print, %s:%d\n", __FILE__, __LINE__);
   val_print(value_type(val), value_contents_for_printing(val),
          value_embedded_offset (val), value_address (val),
          stream, recurse,
          val, options, language);
+  fprintf(stderr, " \033[31m| \033[32m| \033[33m|XYZ in common_val_print, have called val_print, %s:%d\n", __FILE__, __LINE__);
 }
 
 /* Print on stream STREAM the value VAL according to OPTIONS.  The value
@@ -867,32 +873,36 @@ val_print_type_code_int (struct type *type, const gdb_byte *valaddr,
              struct ui_file *stream)
 {
   enum bfd_endian byte_order = gdbarch_byte_order (get_type_arch (type));
-
-  if (TYPE_LENGTH (type) > sizeof (LONGEST))
-    {
+  fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m|"
+        "XYZ beg val_print_type_code_int, %s:%d\n", __FILE__, __LINE__);
+  if (TYPE_LENGTH (type) > sizeof (LONGEST)){
       LONGEST val;
 
       if (TYPE_UNSIGNED (type)
       && extract_long_unsigned_integer (valaddr, TYPE_LENGTH (type),
-                        byte_order, &val))
-    {
-      print_longest (stream, 'u', 0, val);
-    }
-      else
-    {
-      /* Signed, or we couldn't turn an unsigned value into a
+                        byte_order, &val)){
+        print_longest (stream, 'u', 0, val);
+        fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m|"
+          "XYZ in val_print_type_code_int A, val:%lx, %s:%d\n", val, __FILE__, __LINE__);
+      }
+      else{
+        /* Signed, or we couldn't turn an unsigned value into a
          LONGEST.  For signed values, one could assume two's
          complement (a reasonable assumption, I think) and do
          better than this.  */
-      print_hex_chars (stream, (unsigned char *) valaddr,
+        print_hex_chars (stream, (unsigned char *) valaddr,
                TYPE_LENGTH (type), byte_order);
-    }
-    }
-  else
-    {
+      }
+  }
+  else{
+      uint64_t val = unpack_long (type, valaddr);
       print_longest (stream, TYPE_UNSIGNED (type) ? 'u' : 'd', 0,
-             unpack_long (type, valaddr));
-    }
+             val);
+      fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m|"
+        "XYZ in val_print_type_code_int B, val:%lx, %s:%d\n", val, __FILE__, __LINE__);
+  }
+  fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m|"
+        "XYZ end val_print_type_code_int, %s:%d\n", __FILE__, __LINE__);
 }
 
 void

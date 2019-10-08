@@ -584,7 +584,7 @@ default_read_var_value (struct symbol *var, struct frame_info *frame)
       break;
 
     case LOC_COMPUTED:
-     fprintf(stderr, " | | | |XYZ in default_read_var_value: LOC_COMPUTED,"
+     fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m|XYZ in default_read_var_value: LOC_COMPUTED,"
         " SYMBOL_COMPUTED_OPS(var)->read_variable:%lx" 
         ", by nm command we know it is loclist_read_variable, %s:%d\n",
         SYMBOL_COMPUTED_OPS(var)->read_variable, __FILE__, __LINE__); 
@@ -650,7 +650,7 @@ read_var_value (struct symbol *var, struct frame_info *frame)
 
   gdb_assert (lang != NULL);
   gdb_assert (lang->la_read_var_value != NULL);
-  fprintf(stderr, " | | |XYZ in read_var_value, will call lang->la_read_var_value:%lx"
+  fprintf(stderr, " \033[31m| \033[32m| \033[33m|XYZ in read_var_value, will call lang->la_read_var_value:%lx"
         ", by nm command we know it is default_read_var_value function, %s:%d\n", lang->la_read_var_value, __FILE__, __LINE__);
   return lang->la_read_var_value (var, frame);
 }

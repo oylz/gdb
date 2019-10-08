@@ -357,11 +357,39 @@ add_piece (struct dwarf_expr_context *ctx, ULONGEST size, ULONGEST offset)
 
 void
 dwarf_expr_eval (struct dwarf_expr_context *ctx, const gdb_byte *addr,
-		 size_t len, char *pre){
+		 size_t len, int pre){
   int old_recursion_depth = ctx->recursion_depth;
-  fprintf(stderr, "%s | | | | | | |XYZ in dwarf_expr_eval, will call execute_stack_op, %s:%d\n", pre, __FILE__, __LINE__);
-  execute_stack_op(ctx, addr, addr + len, pre);
-  fprintf(stderr, "%s | | | | | | |XYZ in dwarf_expr_eval, have called execute_stack_op, %s:%d\n", pre, __FILE__, __LINE__);
+  char format[256] = {0};
+  char nformat[256] = {0};
+  if(pre == 0){
+    sprintf(format, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m| \033[37m|");
+
+    sprintf(nformat, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m| \033[37m| \033[31m|");
+  }
+  else if(pre == 2){
+    sprintf(format, "%s \033[33m| \033[34m| \033[35m| \033[36m| \033[37m| \033[31m| \033[32m|",
+        " \033[31m| \033[32m|");
+
+    sprintf(nformat, "%s \033[33m| \033[34m| \033[35m| \033[36m| \033[37m| \033[31m| \033[32m| \033[33m|",
+        " \033[31m| \033[32m|");
+  }
+  else if(pre == 6){
+    sprintf(format, "%s \033[37m| \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m|", 
+        " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m|");
+
+    sprintf(nformat, "%s \033[37m| \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m| \033[37m|", 
+        " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m|");
+  }
+  else if(pre == 3){
+    sprintf(format, "%s \033[34m| \033[35m| \033[36m| \033[37m| \033[31m| \033[32m| \033[33m|",
+        " \033[31m| \033[32m| \033[33m|");
+
+    sprintf(nformat, "%s \033[34m| \033[35m| \033[36m| \033[37m| \033[31m| \033[32m| \033[33m| \033[34m|",
+        " \033[31m| \033[32m| \033[33m|");
+  }
+  fprintf(stderr, "%sXYZ in dwarf_expr_eval, will call execute_stack_op, %s:%d\n", format, __FILE__, __LINE__);
+  execute_stack_op(ctx, addr, addr + len, nformat);
+  fprintf(stderr, "%sXYZ in dwarf_expr_eval, have called execute_stack_op, %s:%d\n", format, __FILE__, __LINE__);
   /* CTX RECURSION_DEPTH becomes invalid if an exception was thrown here.  */
 
   gdb_assert (ctx->recursion_depth == old_recursion_depth);
@@ -642,8 +670,11 @@ execute_stack_op(struct dwarf_expr_context *ctx,
      values do not need special treatment.  This special type must be
      different (in the `==' sense) from any base type coming from the
      CU.  */
+
+  char *format = pre;
+
   struct type *address_type = dwarf_expr_address_type (ctx);
-  fprintf(stderr, "%s | | | | | | | |XYZ beg execute_stack_op, %s:%d\n", pre, __FILE__, __LINE__);
+  fprintf(stderr, "%sXYZ beg execute_stack_op, %s:%d\n", format, __FILE__, __LINE__);
   ctx->location = DWARF_VALUE_MEMORY;
   ctx->initialized = 1;  /* Default is initialized.  */
 
@@ -703,13 +734,13 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	case DW_OP_lit29:
 	case DW_OP_lit30:
 	case DW_OP_lit31:
-      fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_lit0-DW_OP_lit31\n", pre);
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_lit0-DW_OP_lit31\n", format);
 	  result = op - DW_OP_lit0;
 	  result_val = value_from_ulongest (address_type, result);
 	  break;
 
 	case DW_OP_addr:
-      fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_addr\n", pre);
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_addr\n", format);
 	  result = extract_unsigned_integer (op_ptr,
 					     ctx->addr_size, byte_order);
 	  op_ptr += ctx->addr_size;
@@ -723,75 +754,75 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  break;
 
 	case DW_OP_GNU_addr_index:
-      fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_GNU_addr_index\n", pre);
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_GNU_addr_index\n", format);
 	  op_ptr = safe_read_uleb128 (op_ptr, op_end, &uoffset);
 	  result = (ctx->funcs->get_addr_index) (ctx->baton, uoffset);
 	  result += ctx->offset;
 	  result_val = value_from_ulongest (address_type, result);
 	  break;
 	case DW_OP_GNU_const_index:
-      fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_GNU_const_index\n", pre);
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_GNU_const_index\n", format);
 	  op_ptr = safe_read_uleb128 (op_ptr, op_end, &uoffset);
 	  result = (ctx->funcs->get_addr_index) (ctx->baton, uoffset);
 	  result_val = value_from_ulongest (address_type, result);
 	  break;
 
 	case DW_OP_const1u:
-      fprintf(stderr, "                ****XYZ in execute_stack_op, DW_OP_const1u\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_const1u\n", format);
 	  result = extract_unsigned_integer (op_ptr, 1, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 1;
 	  break;
 	case DW_OP_const1s:
-      fprintf(stderr, "                ****XYZ in execute_stack_op, DW_OP_const1s\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_const1s\n", format);
 	  result = extract_signed_integer (op_ptr, 1, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 1;
 	  break;
 	case DW_OP_const2u:
-      fprintf(stderr, "                ****XYZ in execute_stack_op, DW_OP_const2u\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_const2u\n", format);
 	  result = extract_unsigned_integer (op_ptr, 2, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 2;
 	  break;
 	case DW_OP_const2s:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_const2s\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_const2s\n", format);
 	  result = extract_signed_integer (op_ptr, 2, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 2;
 	  break;
 	case DW_OP_const4u:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_const4u\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_const4u\n", format);
 	  result = extract_unsigned_integer (op_ptr, 4, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 4;
 	  break;
 	case DW_OP_const4s:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_const4s\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_const4s\n", format);
 	  result = extract_signed_integer (op_ptr, 4, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 4;
 	  break;
 	case DW_OP_const8u:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_const8u\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_const8u\n", format);
 	  result = extract_unsigned_integer (op_ptr, 8, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 8;
 	  break;
 	case DW_OP_const8s:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_const8s\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_const8s\n", format);
 	  result = extract_signed_integer (op_ptr, 8, byte_order);
 	  result_val = value_from_ulongest (address_type, result);
 	  op_ptr += 8;
 	  break;
 	case DW_OP_constu:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_constu\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_constu\n", format);
 	  op_ptr = safe_read_uleb128 (op_ptr, op_end, &uoffset);
 	  result = uoffset;
 	  result_val = value_from_ulongest (address_type, result);
 	  break;
 	case DW_OP_consts:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_consts\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_consts\n", format);
 	  op_ptr = safe_read_sleb128 (op_ptr, op_end, &offset);
 	  result = offset;
 	  result_val = value_from_ulongest (address_type, result);
@@ -831,7 +862,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	case DW_OP_reg29:
 	case DW_OP_reg30:
 	case DW_OP_reg31:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_reg0(%d)-DW_OP_reg31,op:%d\n", DW_OP_reg0, op);
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_reg0(%d)-DW_OP_reg31,op:%d\n", format, DW_OP_reg0, op);
 	  if (op_ptr != op_end 
 	      && *op_ptr != DW_OP_piece
 	      && *op_ptr != DW_OP_bit_piece
@@ -846,7 +877,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  break;
 
 	case DW_OP_regx:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_regex\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_regex\n", format);
 	  op_ptr = safe_read_uleb128 (op_ptr, op_end, &reg);
 	  dwarf_expr_require_composition (op_ptr, op_end, "DW_OP_regx");
 
@@ -857,7 +888,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 
 	case DW_OP_implicit_value:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_implicit_value\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_implicit_value\n", format);
 	    uint64_t len;
 
 	    op_ptr = safe_read_uleb128 (op_ptr, op_end, &len);
@@ -873,14 +904,14 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  goto no_push;
 
 	case DW_OP_stack_value:
-      fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_stack_value, %s:%d\n", pre, __FILE__, __LINE__);
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_stack_value, %s:%d\n", format, __FILE__, __LINE__);
 	  ctx->location = DWARF_VALUE_STACK;
 	  dwarf_expr_require_composition (op_ptr, op_end, "DW_OP_stack_value");
 	  goto no_push;
 
 	case DW_OP_GNU_implicit_pointer:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_GNU_implicit_pointer\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_GNU_implicit_pointer\n", format);
 	    int64_t len;
 
 	    if (ctx->ref_addr_size == -1)
@@ -936,7 +967,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	case DW_OP_breg30:
 	case DW_OP_breg31:
 	  {
-        fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_breg0(%d)-DW_OP_breg31, op:%d, %s:%d\n", pre, DW_OP_breg0, op, __FILE__, __LINE__);
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_breg0(%d)-DW_OP_breg31, op:%d, %s:%d\n", format, DW_OP_breg0, op, __FILE__, __LINE__);
 	    op_ptr = safe_read_sleb128 (op_ptr, op_end, &offset);
 	    result = (ctx->funcs->read_reg) (ctx->baton, op - DW_OP_breg0);
 	    result += offset;
@@ -945,7 +976,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  break;
 	case DW_OP_bregx:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_bregex\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_bregex\n", format);
 	    op_ptr = safe_read_uleb128 (op_ptr, op_end, &reg);
 	    op_ptr = safe_read_sleb128 (op_ptr, op_end, &offset);
 	    result = (ctx->funcs->read_reg) (ctx->baton, reg);
@@ -955,7 +986,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  break;
 	case DW_OP_fbreg:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_fbreg\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_fbreg, %s:%d\n", format, __FILE__, __LINE__);
 	    const gdb_byte *datastart;
 	    size_t datalen;
 	    unsigned int before_stack_len;
@@ -970,7 +1001,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
                get_frame_base_address(), and then implement a dwarf2
                specific this_base method.  */
 	    (ctx->funcs->get_frame_base) (ctx->baton, &datastart, &datalen);
-	    dwarf_expr_eval (ctx, datastart, datalen, pre);
+	    dwarf_expr_eval (ctx, datastart, datalen, 6);
 	    if (ctx->location == DWARF_VALUE_MEMORY)
 	      result = dwarf_expr_fetch_address (ctx, 0);
 	    else if (ctx->location == DWARF_VALUE_REGISTER)
@@ -988,18 +1019,18 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  break;
 
 	case DW_OP_dup:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_dup\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_dup\n", format);
 	  result_val = dwarf_expr_fetch (ctx, 0);
 	  in_stack_memory = dwarf_expr_fetch_in_stack_memory (ctx, 0);
 	  break;
 
 	case DW_OP_drop:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_drop\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_drop\n", format);
 	  dwarf_expr_pop (ctx);
 	  goto no_push;
 
 	case DW_OP_pick:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_pick\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_pick\n", format);
 	  offset = *op_ptr++;
 	  result_val = dwarf_expr_fetch (ctx, offset);
 	  in_stack_memory = dwarf_expr_fetch_in_stack_memory (ctx, offset);
@@ -1007,7 +1038,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  
 	case DW_OP_swap:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_swap\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_swap\n", format);
 	    struct dwarf_stack_value t1, t2;
 
 	    if (ctx->stack_len < 2)
@@ -1022,14 +1053,14 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  }
 
 	case DW_OP_over:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_over\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_over\n", format);
 	  result_val = dwarf_expr_fetch (ctx, 1);
 	  in_stack_memory = dwarf_expr_fetch_in_stack_memory (ctx, 1);
 	  break;
 
 	case DW_OP_rot:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_rot\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_rot\n", format);
 	    struct dwarf_stack_value t1, t2, t3;
 
 	    if (ctx->stack_len < 3)
@@ -1049,10 +1080,10 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	case DW_OP_deref_size:
 	case DW_OP_GNU_deref_type:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, "
+        fprintf(stderr, "%sXYZ in execute_stack_op, "
             "DW_OP_deref(%d)/DW_OP_deref_size(%d)/"
             "DW_OP_GNU_deref_type(%d), op:%d\n", 
-            DW_OP_deref, DW_OP_deref_size, DW_OP_GNU_deref_type, op);
+            format, DW_OP_deref, DW_OP_deref_size, DW_OP_GNU_deref_type, op);
 	    int addr_size = (op == DW_OP_deref ? ctx->addr_size : *op_ptr++);
 	    gdb_byte *buf = alloca (addr_size);
 	    CORE_ADDR addr = dwarf_expr_fetch_address (ctx, 0);
@@ -1094,10 +1125,10 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	case DW_OP_not:
 	case DW_OP_plus_uconst:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, "
+        fprintf(stderr, "%sXYZ in execute_stack_op, "
             "DW_OP_abs(%d)/DW_OP_neg(%d)/"
             "DW_OP_not(%d)/DW_OP_plus_uconst(%d), op:%d\n", 
-            DW_OP_abs, DW_OP_neg, DW_OP_not, DW_OP_plus_uconst, op);
+            format, DW_OP_abs, DW_OP_neg, DW_OP_not, DW_OP_plus_uconst, op);
 
 	    /* Unary operations.  */
 	    result_val = dwarf_expr_fetch (ctx, 0);
@@ -1146,7 +1177,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	case DW_OP_gt:
 	case DW_OP_ne:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_and-DW_OP_ne\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_and-DW_OP_ne\n", format);
 
 	    /* Binary operations.  */
 	    struct value *first, *second;
@@ -1287,14 +1318,14 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  break;
 
 	case DW_OP_call_frame_cfa:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_call_frame_cfa\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_call_frame_cfa\n", format);
 	  result = (ctx->funcs->get_frame_cfa) (ctx->baton);
 	  result_val = value_from_ulongest (address_type, result);
 	  in_stack_memory = 1;
 	  break;
 
 	case DW_OP_GNU_push_tls_address:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_GNU_push_tls_address\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_GNU_push_tls_address\n", format);
 	  /* Variable is at a constant offset in the thread-local
 	  storage block into the objfile for the current thread and
 	  the dynamic linker module containing this expression.  Here
@@ -1310,7 +1341,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  break;
 
 	case DW_OP_skip:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_skip\n");
+      fprintf(stderr, "XYZ in execute_stack_op, DW_OP_skip\n", format);
 	  offset = extract_signed_integer (op_ptr, 2, byte_order);
 	  op_ptr += 2;
 	  op_ptr += offset;
@@ -1318,7 +1349,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 
 	case DW_OP_bra:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_bra\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_bra\n", format);
 	    struct value *val;
 
 	    offset = extract_signed_integer (op_ptr, 2, byte_order);
@@ -1332,12 +1363,12 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  goto no_push;
 
 	case DW_OP_nop:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_nop\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_nop\n", format);
 	  goto no_push;
 
         case DW_OP_piece:
           {
-            fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_piece\n");
+            fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_piece\n", format);
             uint64_t size;
 
             /* Record the piece.  */
@@ -1355,7 +1386,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 
 	case DW_OP_bit_piece:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_bit_piece\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_bit_piece\n", format);
 	    uint64_t size, offset;
 
             /* Record the piece.  */
@@ -1373,7 +1404,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  goto no_push;
 
 	case DW_OP_GNU_uninit:
-      fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_GNU_uninit\n");
+      fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_GNU_uninit\n", format);
 	  if (op_ptr != op_end)
 	    error (_("DWARF-2 expression error: DW_OP_GNU_uninit must always "
 		   "be the very last op."));
@@ -1383,7 +1414,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 
 	case DW_OP_call2:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_call2\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_call2\n", format);
 	    cu_offset offset;
 
 	    offset.cu_off = extract_unsigned_integer (op_ptr, 2, byte_order);
@@ -1394,7 +1425,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 
 	case DW_OP_call4:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_call4\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_call4\n", format);
 	    cu_offset offset;
 
 	    offset.cu_off = extract_unsigned_integer (op_ptr, 4, byte_order);
@@ -1404,7 +1435,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	  goto no_push;
 	
 	case DW_OP_GNU_entry_value:{
-        fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, DW_OP_GNU_entry_value, op:%d, %s:%d\n", pre, op, __FILE__, __LINE__);
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_GNU_entry_value, op:%d, %s:%d\n", format, op, __FILE__, __LINE__);
 	    uint64_t len;
 	    CORE_ADDR deref_size;
 	    union call_site_parameter_u kind_u;
@@ -1414,16 +1445,16 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	      error (_("DW_OP_GNU_entry_value: too few bytes available."));
 
 	    kind_u.dwarf_reg = dwarf_block_to_dwarf_reg(op_ptr, op_ptr + len);
-        fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, A kind_u.dwarf_reg:%d, len:%d, will call :%lx, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function, %s:%d\n", 
-            pre, kind_u.dwarf_reg, len, ctx->funcs->push_dwarf_reg_entry_value, __FILE__, __LINE__);
+        fprintf(stderr, "%sXYZ in execute_stack_op, A kind_u.dwarf_reg:%d, len:%d, will call :%lx, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function, %s:%d\n", 
+            format, kind_u.dwarf_reg, len, ctx->funcs->push_dwarf_reg_entry_value, __FILE__, __LINE__);
 	    if (kind_u.dwarf_reg != -1){
 		  op_ptr += len;
 		  ctx->funcs->push_dwarf_reg_entry_value(ctx,
 						  CALL_SITE_PARAMETER_DWARF_REG,
 							kind_u,
 							-1 /* deref_size */);
-          fprintf(stderr, "%s | | | | | | | |XYZ in execute_stack_op, A kind_u.dwarf_reg:%d, len:%d, have called :%lx, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function, %s:%d\n", 
-            pre,
+          fprintf(stderr, "%sXYZ in execute_stack_op, A kind_u.dwarf_reg:%d, len:%d, have called :%lx, by nm command we know it is dwarf_expr_push_dwarf_reg_entry_value function, %s:%d\n", 
+            format,
             kind_u.dwarf_reg, len, ctx->funcs->push_dwarf_reg_entry_value, __FILE__, __LINE__);
 
 		  goto no_push;
@@ -1432,7 +1463,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	    kind_u.dwarf_reg = dwarf_block_to_dwarf_reg_deref(op_ptr,
 							       op_ptr + len,
 							       &deref_size);
-        fprintf(stderr, "\t\t\t\t\t****XYZ B kind_u.dwarf_reg:%d\n", kind_u.dwarf_reg);
+        fprintf(stderr, "%sXYZ B kind_u.dwarf_reg:%d\n", format, kind_u.dwarf_reg);
 	    if (kind_u.dwarf_reg != -1){
 		  if (deref_size == -1)
 		    deref_size = ctx->addr_size;
@@ -1450,7 +1481,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 
 	case DW_OP_GNU_parameter_ref:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_GNU_parameter_ref\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_GNU_parameter_ref\n", format);
 	    union call_site_parameter_u kind_u;
 
 	    kind_u.param_offset.cu_off = extract_unsigned_integer (op_ptr, 4,
@@ -1465,7 +1496,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 
 	case DW_OP_GNU_const_type:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_GNU_const_type\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_GNU_const_type\n", format);
 	    cu_offset type_die;
 	    int n;
 	    const gdb_byte *data;
@@ -1484,7 +1515,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 
 	case DW_OP_GNU_regval_type:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_GNU_regval_type\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_GNU_regval_type\n", format);
 	    cu_offset type_die;
 	    struct type *type;
 
@@ -1503,7 +1534,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
 	case DW_OP_GNU_convert:
 	case DW_OP_GNU_reinterpret:
 	  {
-        fprintf(stderr, "\t\t\t\t****XYZ in execute_stack_op, DW_OP_GNU_convert/DW_OP_GNU_reinterpret\n");
+        fprintf(stderr, "%sXYZ in execute_stack_op, DW_OP_GNU_convert/DW_OP_GNU_reinterpret\n", format);
 	    cu_offset type_die;
 	    struct type *type;
 
@@ -1550,7 +1581,7 @@ execute_stack_op(struct dwarf_expr_context *ctx,
      have implicit pointers in contexts where pieces are invalid.  */
   if (ctx->location == DWARF_VALUE_IMPLICIT_POINTER)
     add_piece (ctx, 8 * ctx->addr_size, 0);
-  fprintf(stderr, "%s | | | | | | | |XYZ end execute_stack_op, %s:%d\n", pre, __FILE__, __LINE__);
+  fprintf(stderr, "%sXYZ end execute_stack_op, %s:%d\n", format, __FILE__, __LINE__);
 abort_expression:
   ctx->recursion_depth--;
   gdb_assert (ctx->recursion_depth >= 0);
