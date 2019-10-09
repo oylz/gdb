@@ -2672,11 +2672,27 @@ char *
 target_pid_to_str (ptid_t ptid)
 {
   struct target_ops *t;
-  fprintf(stderr, "\t****XYZ target_pid_to_str\n");
+  fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |\033[45m |****XYZ in target_pid_to_str\033[0m, %s:%d\n", __FILE__, __LINE__);
   for (t = current_target.beneath; t != NULL; t = t->beneath)
     {
-      if (t->to_pid_to_str != NULL)
-	return (*t->to_pid_to_str) (t, ptid);
+      if (t->to_pid_to_str != NULL){
+        fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |\033[45m |****XYZ in target_pid_to_str, will call thread_db_pid_to_str\033[0m, %s:%d\n", __FILE__, __LINE__);
+	    return (*t->to_pid_to_str) (t, ptid);
+        fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |\033[45m |****XYZ in target_pid_to_str, have called thread_db_pid_to_str\033[0m, %s:%d\n", __FILE__, __LINE__);
+      }
+    }
+
+  return normal_pid_to_str (ptid);
+}
+char *
+ntarget_pid_to_str (ptid_t ptid)
+{
+  struct target_ops *t;
+  for (t = current_target.beneath; t != NULL; t = t->beneath)
+    {
+      if (t->to_pid_to_str != NULL){
+	    return (*t->to_pid_to_str) (t, ptid);
+      }
     }
 
   return normal_pid_to_str (ptid);

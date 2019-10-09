@@ -413,7 +413,24 @@ execute_command (char *p, int from_tty)
   char *line;
   char pp[256] = {0};
   strcpy(pp, p);
-  fprintf(stderr, "\t****XYZ nnnn========beg in gdb/top.c::execute_command, pp:[%s]=========================================\n", pp);
+  int n = 10;
+  int color = 36;
+  if(0 == strcmp(p, "thread apply all bt")){
+     n = 20;
+     color = 34;
+  }
+  for(int i = 0; i < n; i++){
+    if(n == 10){
+     fprintf(stderr, "\033[%d;7mnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"
+       "nnbeg %snnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn\033[0m%s:%d\n", 
+        color, pp, __FILE__, __LINE__);
+     continue;
+    }
+    fprintf(stderr, "\033[%d;7mNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"
+       "NNbeg %sNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN\033[0m%s:%d\n", 
+        color, pp, __FILE__, __LINE__);
+  }
+  fprintf(stderr, "\033[41m****XYZ nnnn========beg execute_command, pp:[%s]=========================================\033[0m, %s:%d\n", pp, __FILE__, __LINE__);
   cleanup_if_error = make_bpstat_clear_actions_cleanup ();
   cleanup = prepare_execute_command ();
 
@@ -492,9 +509,11 @@ execute_command (char *p, int from_tty)
         deprecated_call_command_hook (c, arg, from_tty);
       }
       else{
-        fprintf(stderr, "\t****XYZ will call cmd_func, c->name:%s, arg:[%s], c->func:%lx\n", 
-            c->name, arg, c->func);
+        fprintf(stderr, "\033[41m****XYZ in execute_command, will call cmd_func, c->name:%s, arg:[%s], c->func:%lx\033[0m, %s:%d\n", 
+            c->name, arg, c->func, __FILE__, __LINE__);
         cmd_func(c, arg, from_tty);// defined in [./gdb/cli/cli-decode.c#L1856]
+        fprintf(stderr, "\033[41m****XYZ in execute_command, have called cmd_func, c->name:%s, arg:[%s], c->func:%lx\033[0m, %s:%d\n", 
+            c->name, arg, c->func, __FILE__, __LINE__);
       }
 
       /* If the interpreter is in sync mode (we're running a user
@@ -508,16 +527,28 @@ execute_command (char *p, int from_tty)
           }
         }
       }
-      fprintf(stderr, "\t****XYZ will call execute_cmd_post_hook\n"); 
+      fprintf(stderr, "\033[41m****XYZ in execute_command, will call execute_cmd_post_hook\033[0m, %s:%d\n", __FILE__, __LINE__); 
       /* If this command has been post-hooked, run the hook last.  */
       execute_cmd_post_hook (c);
+      fprintf(stderr, "\033[41m****XYZ in execute_command, have called execute_cmd_post_hook\033[0m, %s:%d\n", __FILE__, __LINE__); 
   }
 
   check_frame_language_change ();
 
   do_cleanups (cleanup);
   discard_cleanups (cleanup_if_error);
-  fprintf(stderr, "\t****XYZ uuuu========end in gdb/top.c::execute_command, pp:[%s]=========================================\n", pp); 
+  fprintf(stderr, "\033[41m****XYZ nnnn========end execute_command, pp:[%s]=========================================\033[0m, %s:%d\n", pp, __FILE__, __LINE__);
+  for(int i = 0; i < n; i++){
+    if(n == 10){
+     fprintf(stderr, "\033[%d;7muuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"
+       "uuend %suuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu\033[0m%s:%d\n", 
+        color, pp, __FILE__, __LINE__);
+     continue;
+    }
+    fprintf(stderr, "\033[%d;7mUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"
+       "UUend %sUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU\033[0m%s:%d\n", 
+        color, pp, __FILE__, __LINE__);
+  }
 }
 
 /* Run execute_command for P and FROM_TTY.  Capture its output into the

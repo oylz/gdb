@@ -109,10 +109,14 @@ print_help_for_command (struct cmd_list_element *c, char *prefix, int recurse,
 
 static void
 do_cfunc(struct cmd_list_element *c, char *args, int from_tty){
-  fprintf(stderr, "\t****XYZ in do_cfunc, c->function.cfunc:%lx, "
-        "by nm command, we know c->function.cfunc is [backtrace_command]\n", 
-        c->function.cfunc);
+  fprintf(stderr, "\033[41m|\033[42m |\033[43m |****XYZ in do_cfunc, will call c->function.cfunc:%lx, "
+        "by nm command, we know c->function.cfunc is [thread_apply_all_command]\033[0m, %s:%d\n", 
+        c->function.cfunc, __FILE__, __LINE__);
   c->function.cfunc(args, from_tty); /* Ok.  */
+  fprintf(stderr, "\033[41m\033[42m |\033[43m |****XYZ in do_cfunc, have called c->function.cfunc:%lx, "
+        "by nm command, we know c->function.cfunc is [thread_apply_all_command]\033[0m, %s:%d\n", 
+        c->function.cfunc, __FILE__, __LINE__);
+
 }
 
 void
@@ -1849,8 +1853,9 @@ void
 cmd_func(struct cmd_list_element *cmd, char *args, int from_tty)
 {
   if (cmd_func_p(cmd)){
-    fprintf(stderr, "\t****XYZ in cmd_func, by nm command, we know cmd->func is do_cfunc\n");
+    fprintf(stderr, "\033[41m\033[42m |****XYZ in cmd->func, will call cmd->func, by nm command, we know it's do_cfunc\033[0m, %s:%d\n", __FILE__, __LINE__);
     (*cmd->func)(cmd, args, from_tty);
+    fprintf(stderr, "\033[41m\033[42m |****XYZ in cmd->func, have called cmd->func, by nm command, we know it's do_cfunc\033[0m, %s:%d\n", __FILE__, __LINE__);
   }
   else{
     error (_("Invalid command"));

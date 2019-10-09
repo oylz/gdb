@@ -1743,7 +1743,7 @@ thread_db_pid_to_str (struct target_ops *ops, ptid_t ptid)
       thread_t tid;
 
       tid = thread_info->private->tid;
-      fprintf(stderr, "\t****XYZ in thread_db_pid_to_str\n");
+      //fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |\033[45m |\033[46m |****XYZ in thread_db_pid_to_str\033[0m, %s:%d\n", __FILE__, __LINE__);
       snprintf (buf, sizeof (buf), "XYZ_Thread 0x%lx (LWP %ld)",
 		tid, GET_LWP (ptid));
 

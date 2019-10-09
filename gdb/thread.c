@@ -1183,7 +1183,7 @@ thread_apply_all_command (char *cmd, int from_tty)
   struct thread_info *tp;
   struct cleanup *old_chain;
   char *saved_cmd;
-  fprintf(stderr, "\t****XYZ thread_apply_all_command, cmd:[%s], from_tty:%d\n", cmd, from_tty);
+  fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |****XYZ beg thread_apply_all_command, cmd:[%s], from_tty:%d\033[0m, %s:%d\n", cmd, from_tty, __FILE__, __LINE__);
   if (cmd == NULL || *cmd == '\000')
     error (_("Please specify a command following the thread ID list"));
 
@@ -1200,15 +1200,16 @@ thread_apply_all_command (char *cmd, int from_tty)
       {
 	switch_to_thread (tp->ptid);
 
-	printf_filtered (_("\nThread %d (%s):\n"),
-			 tp->num, target_pid_to_str (inferior_ptid));
-    fprintf(stderr, "\t****XYZ in thread_apply_all_command, tp->num:%d, target_pid_to_str:%s, cmd:[%s]\n", tp->num, target_pid_to_str(inferior_ptid), cmd);
+	printf_filtered (_("\nThread %d (%s):\n"), tp->num, ntarget_pid_to_str (inferior_ptid));
+
+    fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |****XYZ in thread_apply_all_command, tp->num:%d, target_pid_to_str:%s, cmd:[%s]\033[0m, %s:%d\n", tp->num, target_pid_to_str(inferior_ptid), cmd, __FILE__, __LINE__);
 	execute_command (cmd, from_tty);
 	strcpy (cmd, saved_cmd);	/* Restore exact command used
 					   previously.  */
       }
 
   do_cleanups (old_chain);
+  fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |****XYZ end thread_apply_all_command, cmd:[%s], from_tty:%d\033[0m, %s:%d\n", cmd, from_tty, __FILE__, __LINE__);
 }
 
 static void

@@ -863,9 +863,12 @@ print_frame_info(struct frame_info *frame, int print_level,
             || print_what == SRC_AND_LOC);
 
   if (location_print || !sal.symtab){
-    fprintf(stderr, "\033[4mXYZ in print_frame_info, will call print_frame\033[0m\n");
+    fprintf(stderr, "\033[7mXYZ in print_frame_info, will call print_frame\033[0m, %s:%d\n", __FILE__, __LINE__);
     print_frame(frame, print_level, print_what, print_args, sal);
-    fprintf(stderr, "\033[4mXYZ in print_frame_info, have called print_frame\033[0m\n");
+    fprintf(stderr, "\033[7mXYZ in print_frame_info, have called print_frame\033[0m, %s:%d\n"
+        "================================================================================================================\n" 
+        "================================================================================================================\n",
+        __FILE__, __LINE__);
   }
 
   source_print = (print_what == SRC_LINE || print_what == SRC_AND_LOC);
@@ -1210,9 +1213,9 @@ print_frame (struct frame_info *frame, int print_level,
  
       args_list_chain = make_cleanup_ui_out_list_begin_end(uiout, "args");
       TRY_CATCH (e, RETURN_MASK_ERROR){
-        fprintf(stderr, "\033[7mXYZ in print_frame, will call print_frame_args\033[0m\n");
+        fprintf(stderr, "\033[4mXYZ in print_frame, will call print_frame_args\033[0m, %s:%d\n", __FILE__, __LINE__);
         print_frame_args(func, frame, numargs, gdb_stdout);
-        fprintf(stderr, "\033[7mXYZ in print_frame, have called print_frame_args\033[0m\n");
+        fprintf(stderr, "\033[4mXYZ in print_frame, have called print_frame_args\033[0m, %s:%d\n", __FILE__, __LINE__);
       }
       /* FIXME: ARGS must be a list.  If one argument is a string it
       will have " that will not be properly escaped.  */
@@ -1701,7 +1704,7 @@ backtrace_command_1(char *count_exp, int show_locals, int from_tty)
   if(!target_has_stack){
     error (_("No stack."));
   }
-  fprintf(stderr, "\t****XYZ beg backtrace_command_1\n"); 
+  fprintf(stderr, "\033[36;7m****XYZ beg backtrace_command_1\033[0m\n"); 
   /* The following code must do two things.  First, it must set the
      variable TRAILING to the frame from which we should start
      printing.  Second, it must set the variable count to the number
@@ -1754,7 +1757,7 @@ backtrace_command_1(char *count_exp, int show_locals, int from_tty)
       }
   }
 
-  fprintf(stderr, "\t****XYZ mid backtrace_command_1\n"); 
+  fprintf(stderr, "\033[36;7m****XYZ mid backtrace_command_1\033[0m\n"); 
   for (i = 0, fi = trailing; fi && count--; i++, fi = get_prev_frame (fi)){
       QUIT;
 
@@ -1795,7 +1798,7 @@ backtrace_command_1(char *count_exp, int show_locals, int from_tty)
         printf_filtered (_("Backtrace stopped: %s\n"), frame_stop_reason_string(reason));
       }
   }
-  fprintf(stderr, "\t****XYZ end backtrace_command_1\n"); 
+  fprintf(stderr, "\033[36;7m****XYZ end backtrace_command_1\033[0m\n"); 
 }
 
 static void

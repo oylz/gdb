@@ -580,6 +580,7 @@ int write_inferior_memory (CORE_ADDR memaddr, const unsigned char *myaddr,
 void set_desired_inferior (int id);
 
 const char *target_pid_to_str (ptid_t);
+const char *ntarget_pid_to_str (ptid_t);
 
 const char *target_waitstatus_to_string (const struct target_waitstatus *);
 
