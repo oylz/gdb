@@ -110,12 +110,12 @@ print_help_for_command (struct cmd_list_element *c, char *prefix, int recurse,
 static void
 do_cfunc(struct cmd_list_element *c, char *args, int from_tty){
   fprintf(stderr, "\033[41m|\033[42m |\033[43m |****XYZ in do_cfunc, will call c->function.cfunc:%lx, "
-        "by nm command, we know c->function.cfunc is [thread_apply_all_command]\033[0m, %s:%d\n", 
-        c->function.cfunc, __FILE__, __LINE__);
+        "by nm command, we know c->function.cfunc is [%s], c->name:%s\033[0m, %s:%d\n", 
+        c->function.cfunc, strcmp(c->name, "all")?"backtrace_command":"thread_apply_all_command", c->name, __FILE__, __LINE__);
   c->function.cfunc(args, from_tty); /* Ok.  */
   fprintf(stderr, "\033[41m\033[42m |\033[43m |****XYZ in do_cfunc, have called c->function.cfunc:%lx, "
-        "by nm command, we know c->function.cfunc is [thread_apply_all_command]\033[0m, %s:%d\n", 
-        c->function.cfunc, __FILE__, __LINE__);
+        "by nm command, we know c->function.cfunc is [%s], c->name:%s\033[0m, %s:%d\n", 
+        c->function.cfunc, strcmp(c->name, "all")?"backtrace_command":"thread_apply_all_command", c->name, __FILE__, __LINE__);
 
 }
 

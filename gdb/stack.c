@@ -1718,7 +1718,7 @@ backtrace_command_1(char *count_exp, int show_locals, int from_tty)
   if(!target_has_stack){
     error (_("No stack."));
   }
-  fprintf(stderr, "\033[36;7m****XYZ beg backtrace_command_1\033[0m\n"); 
+  fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |\033[45m |****XYZ beg backtrace_command_1\033[0m, %s:%d\n", __FILE__, __LINE__); 
   /* The following code must do two things.  First, it must set the
      variable TRAILING to the frame from which we should start
      printing.  Second, it must set the variable count to the number
@@ -1771,7 +1771,7 @@ backtrace_command_1(char *count_exp, int show_locals, int from_tty)
       }
   }
 
-  fprintf(stderr, "\033[36;7m****XYZ mid backtrace_command_1\033[0m\n"); 
+  fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |\033[45m |****XYZ mid backtrace_command_1\033[0m, %s:%d\n", __FILE__, __LINE__); 
   for (i = 0, fi = trailing; fi && count--; i++, fi = get_prev_frame (fi)){
       QUIT;
 
@@ -1779,7 +1779,9 @@ backtrace_command_1(char *count_exp, int show_locals, int from_tty)
          means further attempts to backtrace would fail (on the other
          hand, perhaps the code does or could be fixed to make sure
          the frame->prev field gets set to NULL in that case).  */
+      fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |\033[45m |****XYZ in backtrace_command_1, i:%d, will call print_frame_info\033[0m, %s:%d\n", i, __FILE__, __LINE__); 
       print_frame_info(fi, 1, LOCATION, 1);
+      fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |\033[45m |****XYZ in backtrace_command_1, i:%d, have called print_frame_info\033[0m, %s:%d\n", i, __FILE__, __LINE__); 
       if (show_locals){
         struct frame_id frame_id = get_frame_id (fi);
 
@@ -1812,7 +1814,7 @@ backtrace_command_1(char *count_exp, int show_locals, int from_tty)
         printf_filtered (_("Backtrace stopped: %s\n"), frame_stop_reason_string(reason));
       }
   }
-  fprintf(stderr, "\033[36;7m****XYZ end backtrace_command_1\033[0m\n"); 
+  fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |\033[45m |****XYZ end backtrace_command_1\033[0m, %s:%d\n", __FILE__, __LINE__); 
 }
 
 static void
@@ -1860,9 +1862,11 @@ backtrace_command(char *arg, int from_tty){
         }
      }
   }
-
+  fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |****XYZ in backtrace_command,"
+    "will call backtrace_command_1\033[0m, %s:%d\n", __FILE__, __LINE__);
   backtrace_command_1(arg, fulltrace_arg >= 0 /* show_locals */, from_tty);
-
+  fprintf(stderr, "\033[41m|\033[42m |\033[43m |\033[44m |****XYZ in backtrace_command,"
+    "have called backtrace_command_1\033[0m, %s:%d\n", __FILE__, __LINE__);
   do_cleanups(old_chain);
 }
 
