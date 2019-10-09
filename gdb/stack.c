@@ -863,7 +863,9 @@ print_frame_info(struct frame_info *frame, int print_level,
             || print_what == SRC_AND_LOC);
 
   if (location_print || !sal.symtab){
+    fprintf(stderr, "\033[4mXYZ in print_frame_info, will call print_frame\033[0m\n");
     print_frame(frame, print_level, print_what, print_args, sal);
+    fprintf(stderr, "\033[4mXYZ in print_frame_info, have called print_frame\033[0m\n");
   }
 
   source_print = (print_what == SRC_LINE || print_what == SRC_AND_LOC);
@@ -1208,7 +1210,9 @@ print_frame (struct frame_info *frame, int print_level,
  
       args_list_chain = make_cleanup_ui_out_list_begin_end(uiout, "args");
       TRY_CATCH (e, RETURN_MASK_ERROR){
+        fprintf(stderr, "\033[7mXYZ in print_frame, will call print_frame_args\033[0m\n");
         print_frame_args(func, frame, numargs, gdb_stdout);
+        fprintf(stderr, "\033[7mXYZ in print_frame, have called print_frame_args\033[0m\n");
       }
       /* FIXME: ARGS must be a list.  If one argument is a string it
       will have " that will not be properly escaped.  */
