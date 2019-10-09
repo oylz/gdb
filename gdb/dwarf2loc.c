@@ -1012,7 +1012,7 @@ dwarf_expr_reg_to_entry_parameter (struct frame_info *frame,
   char format[256] = {0};
   sprintf(format, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m| \033[37m| \033[31m| \033[32m| \033[33m|");
 
-  fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter A, %s:%d\n",
+  fprintf(stderr, "%sXYZ, beg dwarf_expr_reg_to_entry_parameter, %s:%d\n",
     format, __FILE__, __LINE__);
   func_addr = get_frame_func (frame);
   gdbarch = get_frame_arch (frame);
@@ -1030,8 +1030,7 @@ dwarf_expr_reg_to_entry_parameter (struct frame_info *frame,
            msym == NULL ? "???" : SYMBOL_PRINT_NAME (msym),
            gdbarch_bfd_arch_info (caller_gdbarch)->printable_name);
     }
-  fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter B, %s:%d\n",
-    format, __FILE__, __LINE__);
+  //fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter B, %s:%d\n",format, __FILE__, __LINE__);
   if (caller_frame == NULL)
     {
       struct minimal_symbol *msym = lookup_minimal_symbol_by_pc (func_addr);
@@ -1043,10 +1042,17 @@ dwarf_expr_reg_to_entry_parameter (struct frame_info *frame,
     }
   caller_pc = get_frame_pc (caller_frame);
   call_site = call_site_for_pc (gdbarch, caller_pc);
-  fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter C1, will call call_site_to_target_addr, %s:%d\n", format, __FILE__, __LINE__);
-  target_addr = call_site_to_target_addr (gdbarch, call_site, caller_frame);
-  fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter C2, have called call_site_to_target_addr, %s:%d\n", format, __FILE__, __LINE__);
-  if (target_addr != func_addr)
+  {
+    struct dwarf2_locexpr_baton *dwarf_block;
+    dwarf_block = FIELD_DWARF_BLOCK(call_site->target);
+    fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter, we print frame:%lx, "
+        "block_data:%lx, block_size:%d %s:%d\n",
+        format, caller_frame, dwarf_block->data, dwarf_block->size, __FILE__, __LINE__);
+  }
+  //fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter C1, will call call_site_to_target_addr, %s:%d\n", format, __FILE__, __LINE__);
+  //XYZ DISABLE target_addr = call_site_to_target_addr (gdbarch, call_site, caller_frame);
+  //fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter C2, have called call_site_to_target_addr, %s:%d\n", format, __FILE__, __LINE__);
+  /*XYZ DISABLE if (target_addr != func_addr)
     {
       struct minimal_symbol *target_msym, *func_msym;
 
@@ -1060,9 +1066,8 @@ dwarf_expr_reg_to_entry_parameter (struct frame_info *frame,
            paddress (gdbarch, target_addr),
            func_msym == NULL ? "???" : SYMBOL_PRINT_NAME (func_msym),
            paddress (gdbarch, func_addr));
-    }
-  fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter D, %s:%d\n",
-   format,  __FILE__, __LINE__);
+    }*/
+  //fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter D, %s:%d\n",format,  __FILE__, __LINE__);
   /* No entry value based parameters would be reliable if this function can
      call itself via tail calls.  */
   func_verify_no_selftailcall (gdbarch, func_addr);
@@ -1073,8 +1078,8 @@ dwarf_expr_reg_to_entry_parameter (struct frame_info *frame,
       if (call_site_parameter_matches (parameter, kind, kind_u))
     break;
     }
-  fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter E, %s:%d\n",
-    format, __FILE__, __LINE__);
+  fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter \033[5mparameter\033[0m%s(%lx, %d), %s:%d\n",
+    format, format, parameter->value, parameter->value_size, __FILE__, __LINE__);
   if (iparams == call_site->parameter_count)
     {
       struct minimal_symbol *msym = lookup_minimal_symbol_by_pc (caller_pc);
@@ -1086,7 +1091,7 @@ dwarf_expr_reg_to_entry_parameter (struct frame_info *frame,
            paddress (gdbarch, caller_pc),
            msym == NULL ? "???" : SYMBOL_PRINT_NAME (msym)); 
     }
-  fprintf(stderr, "%sXYZ, in dwarf_expr_reg_to_entry_parameter F, %s:%d\n",
+  fprintf(stderr, "%sXYZ, end dwarf_expr_reg_to_entry_parameter, %s:%d\n",
     format, __FILE__, __LINE__);
   *per_cu_return = call_site->per_cu;
   return parameter;
@@ -1164,15 +1169,15 @@ dwarf_expr_push_dwarf_reg_entry_value (struct dwarf_expr_context *ctx,
   frame = debaton->frame;
   caller_frame = get_prev_frame (frame);
   char format[256] = {0};
-  sprintf(format, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m| \033[37m| \033[31m| \033[32m|");
+  sprintf(format, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m| \033[37m| \033[31m| \033[32;4m|");
 
-  fprintf(stderr, "%sXYZ, in dwarf_expr_push_dwarf_reg_entry_value A1, will call dwarf_expr_reg_to_entry_parameter, %s:%d\n", format, __FILE__, __LINE__);
+  fprintf(stderr, "%sXYZ, in dwarf_expr_push_dwarf_reg_entry_value A1(A1->B for C[dwarf_expr_eval]'s data_src&size, by eval prev frame), will call dwarf_expr_reg_to_entry_parameter, %s:%d\033[0m\n", format, __FILE__, __LINE__);
   parameter = dwarf_expr_reg_to_entry_parameter(frame, kind, kind_u,
                          &caller_per_cu);
-  fprintf(stderr, "%sXYZ, in dwarf_expr_push_dwarf_reg_entry_value A2, have called dwarf_expr_reg_to_entry_parameter, %s:%d\n", format, __FILE__, __LINE__);
+  fprintf(stderr, "%sXYZ, in dwarf_expr_push_dwarf_reg_entry_value A2(A1->B for C[dwarf_expr_eval]'s data_src&size, by eval prev frame), have called dwarf_expr_reg_to_entry_parameter, %s:%d\033[0m\n", format, __FILE__, __LINE__);
   data_src = deref_size == -1 ? parameter->value : parameter->data_value;
   size = deref_size == -1 ? parameter->value_size : parameter->data_value_size;
-  fprintf(stderr, "%sXYZ, in dwarf_expr_push_dwarf_reg_entry_value B, data_src:%lx, size:%d, %s:%d\n",
+  fprintf(stderr, "%sXYZ, in dwarf_expr_push_dwarf_reg_entry_value B, data_src:%lx, size:%d, %s:%d\033[0m\n",
         format, data_src, size, __FILE__, __LINE__);
   /* DEREF_SIZE size is not verified here.  */
   if (data_src == NULL)
@@ -1190,9 +1195,9 @@ dwarf_expr_push_dwarf_reg_entry_value (struct dwarf_expr_context *ctx,
   ctx->addr_size = dwarf2_per_cu_addr_size (baton_local.per_cu);
   ctx->offset = dwarf2_per_cu_text_offset (baton_local.per_cu);
   ctx->baton = &baton_local;
-  fprintf(stderr, "%sXYZ, in dwarf_expr_push_dwarf_reg_entry_value C, will call dwarf_expr_eval, %s:%d\n", format, __FILE__, __LINE__);
+  fprintf(stderr, "%sXYZ, in dwarf_expr_push_dwarf_reg_entry_value C, will call dwarf_expr_eval, %s:%d\033[0m\n", format, __FILE__, __LINE__);
   dwarf_expr_eval(ctx, data_src, size, 3);
-  fprintf(stderr, "%sXYZ, in dwarf_expr_push_dwarf_reg_entry_value D, have called dwarf_expr_eval, %s:%d\n", format, __FILE__, __LINE__);
+  fprintf(stderr, "%sXYZ, in dwarf_expr_push_dwarf_reg_entry_value D, have called dwarf_expr_eval, %s:%d\033[0m\n", format, __FILE__, __LINE__);
   ctx->gdbarch = saved_ctx.gdbarch;
   ctx->addr_size = saved_ctx.addr_size;
   ctx->offset = saved_ctx.offset;
@@ -2201,7 +2206,8 @@ dwarf2_evaluate_loc_desc_full(struct type *type, struct frame_info *frame,
         " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m| \033[36m|");
     sprintf(last, "36");
   }
-  fprintf(stderr, "%sXYZ beg dwarf2_evaluate_loc_desc_full, %s:%d\n", format, __FILE__, __LINE__);
+  fprintf(stderr, "%sXYZ beg \033[5m dwarf2_evaluate_loc_desc_full\033[0m%s, frame:%lx, data:%lx, size:%d, %s:%d\n", 
+        format, format, frame, data, size, __FILE__, __LINE__);
   if(byte_offset < 0)
     invalid_synthetic_pointer ();
 
@@ -4051,7 +4057,12 @@ loclist_read_variable (struct symbol *symbol, struct frame_info *frame)
   CORE_ADDR pc = frame ? get_frame_address_in_block (frame) : 0;
 
   data = dwarf2_find_location_expression(dlbaton, &size, pc);
-  fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in loclist_read_variable, have called dwarf2_find_location_expression, will call dwarf2_evaluate_loc_desc_full, %s:%d\n", __FILE__, __LINE__);  
+
+  char *sym_name = SYMBOL_PRINT_NAME(symbol);
+  fprintf(stderr, " \033[31m| \033[32m| \033[33m| \033[34m| \033[35m|XYZ in loclist_read_variable, "
+        "have called dwarf2_find_location_expression, will call dwarf2_evaluate_loc_desc_full, "
+        "sym_name:%s, data:%lx, size:%d, %s:%d\n", 
+        sym_name, data, size, __FILE__, __LINE__);  
   //val = dwarf2_evaluate_loc_desc(SYMBOL_TYPE (symbol), frame, data, size,
   //                dlbaton->per_cu);
   val = dwarf2_evaluate_loc_desc_full(SYMBOL_TYPE (symbol), frame, data, size,

@@ -689,7 +689,8 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
             entryarg.entry_kind = print_entry_values_no;
         }
         else{
-          fprintf(stderr, " \033[31m|XYZ will call read_frame_arg, %s:%d\n", __FILE__, __LINE__);
+          char *sym_name = SYMBOL_PRINT_NAME(sym);
+          fprintf(stderr, " \033[31m|XYZ will call read_frame_arg, sym_name:%s, \033[5mframe\033[0m:%lx, %s:%d\n", sym_name, frame,  __FILE__, __LINE__);
           read_frame_arg(sym, frame, &arg, &entryarg);
         }
   
