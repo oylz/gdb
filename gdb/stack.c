@@ -679,7 +679,14 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
           ui_out_text(uiout, ", ");
         }
         ui_out_wrap_hint(uiout, "    ");
-        fprintf(stderr, "\033[0m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^, %s:%d\n", __FILE__, __LINE__); 
+        
+        char *sym_name = SYMBOL_PRINT_NAME(sym);
+        const char *funname = NULL;
+        enum language funlang = language_unknown;
+        struct symbol *func;
+        find_frame_funname(frame, &funname, &funlang, &func);
+
+        fprintf(stderr, "\033[0m^^^^^^^^ beg process %s's argument:%s ^^^^^^^^^^^^^^^^^^^^^^, %s:%d\n\n", funname, sym_name, __FILE__, __LINE__); 
         if(!print_args){
             memset (&arg, 0, sizeof (arg));
             arg.sym = sym;
@@ -689,7 +696,6 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
             entryarg.entry_kind = print_entry_values_no;
         }
         else{
-          char *sym_name = SYMBOL_PRINT_NAME(sym);
           fprintf(stderr, " \033[31m|XYZ will call read_frame_arg, sym_name:%s, \033[5mframe\033[0m:%lx, %s:%d\n", sym_name, frame,  __FILE__, __LINE__);
           read_frame_arg(sym, frame, &arg, &entryarg);
         }
@@ -705,7 +711,7 @@ print_frame_args(struct symbol *func, struct frame_info *frame,
             }
             print_frame_arg(&entryarg);
         }
-        fprintf(stderr, "\033[0mvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv, %s:%d\n", __FILE__, __LINE__);  
+        fprintf(stderr, "\033[0mvvvvvvvv end process %s's argument:%s vvvvvvvvvvvvvvvvvvvvvvvv, %s:%d\n\n", funname, sym_name, __FILE__, __LINE__);  
         xfree (arg.error);
         xfree (entryarg.error);
   
@@ -863,6 +869,14 @@ print_frame_info(struct frame_info *frame, int print_level,
             || print_what == SRC_AND_LOC);
 
   if (location_print || !sal.symtab){
+    const char *funname = NULL;
+    enum language funlang = language_unknown;
+    struct symbol *func;
+    find_frame_funname(frame, &funname, &funlang, &func);
+    if(strcmp(funname, "fun")){
+        return;
+    }
+    fprintf(stderr, "\033[1;7;44mXYZ in print_frame, only process funname:%s\033[0m, %s:%d\n", funname, __FILE__, __LINE__); 
     fprintf(stderr, "\033[7mXYZ in print_frame_info, will call print_frame\033[0m, %s:%d\n", __FILE__, __LINE__);
     print_frame(frame, print_level, print_what, print_args, sal);
     fprintf(stderr, "\033[7mXYZ in print_frame_info, have called print_frame\033[0m, %s:%d\n"
